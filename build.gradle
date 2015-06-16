@@ -140,10 +140,10 @@ jar {
 sourceSets {
     main {
 	    java {
-	        srcDir '${config.mod_basename} mod src/main/java' exclude('net/minecraft/**')
+	        srcDir '${config.mod_basename} mod java' exclude('net/minecraft/**')
 	    }
         resources {
-            srcDir '${config.mod_basename} mod src/main/resources' include('assets/**','*.cfg','*.png','*.mcmeta','*.info')
+            srcDir '${config.mod_basename} mod resources' include('assets/**','*.cfg','*.png','*.mcmeta','*.info')
         }
     }
 }

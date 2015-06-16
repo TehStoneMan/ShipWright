@@ -1,0 +1,8 @@
+{
+    "variants": {
+        "facing=north": { "model": "shipwright:crate_wood" },
+        "facing=south": { "model": "shipwright:crate_wood", "y": 180 },
+        "facing=west":  { "model": "shipwright:crate_wood", "y": 270 },
+        "facing=east":  { "model": "shipwright:crate_wood", "y": 90 }
+    }
+}

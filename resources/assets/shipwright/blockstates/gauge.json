@@ -1,0 +1,12 @@
+{
+    "variants": {
+        "facing=north,type=basic": { "model": "shipwright:gauge_basic" },
+        "facing=south,type=basic": { "model": "shipwright:gauge_basic", "y": 180 },
+        "facing=west,type=basic":  { "model": "shipwright:gauge_basic", "y": 270 },
+        "facing=east,type=basic":  { "model": "shipwright:gauge_basic", "y": 90 },
+        "facing=north,type=advanced": { "model": "shipwright:gauge_advanced" },
+        "facing=south,type=advanced": { "model": "shipwright:gauge_advanced", "y": 180 },
+        "facing=west,type=advanced":  { "model": "shipwright:gauge_advanced", "y": 270 },
+        "facing=east,type=advanced":  { "model": "shipwright:gauge_advanced", "y": 90 }
+    }
+}

@@ -1,0 +1,8 @@
+{
+    "variants": {
+        "facing=north": { "model": "shipwright:seat" },
+        "facing=south": { "model": "shipwright:seat", "y": 180 },
+        "facing=west":  { "model": "shipwright:seat", "y": 270 },
+        "facing=east":  { "model": "shipwright:seat", "y": 90 }
+    }
+}

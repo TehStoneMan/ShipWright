@@ -1,0 +1,17 @@
+[
+{
+  "modid": "shipwright",
+  "name": "ShipWright",
+  "description": "An advanced shipbuilding mod based on BalkondeurAlpha's Archimedes' Ships 1.7.1",
+  "version": "${version}",
+  "mcversion": "${mcversion}",
+  "url": "",
+  "updateUrl": "",
+  "authors": ["TehStoneMan", "BalkondeurAlpha"],
+  "credits": "Created by TehStoneMan",
+  "logoFile": "",
+  "parent": "",
+  "screenshots": [],
+  "dependencies": []
+}
+]

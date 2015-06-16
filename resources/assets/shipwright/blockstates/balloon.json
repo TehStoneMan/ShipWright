@@ -1,0 +1,20 @@
+{
+    "variants": {
+        "color=black"      : { "model": "shipwright:balloon_black" },
+        "color=blue"       : { "model": "shipwright:balloon_blue" },
+        "color=brown"      : { "model": "shipwright:balloon_brown" },
+        "color=cyan"       : { "model": "shipwright:balloon_cyan" },
+        "color=gray"       : { "model": "shipwright:balloon_gray" },
+        "color=green"      : { "model": "shipwright:balloon_green" },
+        "color=light_blue" : { "model": "shipwright:balloon_light_blue" },
+        "color=lime"       : { "model": "shipwright:balloon_lime" },
+        "color=magenta"    : { "model": "shipwright:balloon_magenta" },
+        "color=orange"     : { "model": "shipwright:balloon_orange" },
+        "color=pink"       : { "model": "shipwright:balloon_pink" },
+        "color=purple"     : { "model": "shipwright:balloon_purple" },
+        "color=red"        : { "model": "shipwright:balloon_red" },
+        "color=silver"     : { "model": "shipwright:balloon_silver" },
+        "color=white"      : { "model": "shipwright:balloon_white" },
+        "color=yellow"     : { "model": "shipwright:balloon_yellow" }
+    }
+}

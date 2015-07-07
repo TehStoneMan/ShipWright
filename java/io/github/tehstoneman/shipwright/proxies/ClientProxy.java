@@ -26,6 +26,7 @@ public class ClientProxy extends CommonProxy
 	{
 		super.preInit();
 
+		// Add block variants to inventory
 		final Item itemBalloon = GameRegistry.findItem( ModInfo.MODID, "balloon" );
 		final Item itemGauge   = GameRegistry.findItem( ModInfo.MODID, "gauge" );
 
@@ -43,6 +44,7 @@ public class ClientProxy extends CommonProxy
 	{
 		super.init();
 
+		// Register item models for blocks
 		Item itemBalloon   = GameRegistry.findItem( ModInfo.MODID, BlockBalloon.getName()   );
 		Item itemBuffer    = GameRegistry.findItem( ModInfo.MODID, BlockBuffer.getName()    );
 		Item itemCrateWood = GameRegistry.findItem( ModInfo.MODID, BlockCrateWood.getName() );

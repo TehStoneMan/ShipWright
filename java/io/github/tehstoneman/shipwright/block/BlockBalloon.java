@@ -1,5 +1,7 @@
 package io.github.tehstoneman.shipwright.block;
 
+import io.github.tehstoneman.shipapi.BlockDensity;
+
 import java.util.List;
 
 import net.minecraft.block.Block;
@@ -12,10 +14,13 @@ import net.minecraft.creativetab.CreativeTabs;
 import net.minecraft.item.EnumDyeColor;
 import net.minecraft.item.Item;
 import net.minecraft.item.ItemStack;
+import net.minecraftforge.fml.common.Optional;
+import net.minecraftforge.fml.common.Optional.Method;
 import net.minecraftforge.fml.relauncher.Side;
 import net.minecraftforge.fml.relauncher.SideOnly;
 
-public class BlockBalloon extends Block
+@Optional.Interface(iface="io.gethub.tehstoneman.shipapi.BlockDensity", modid="shipwright", striprefs=true)
+public class BlockBalloon extends Block implements BlockDensity
 {
 	public static final PropertyEnum	COLOR	= PropertyEnum.create( "color", EnumDyeColor.class );
 	private static String				name	= "balloon";
@@ -66,5 +71,12 @@ public class BlockBalloon extends Block
 	protected BlockState createBlockState()
 	{
 		return new BlockState( this, new IProperty[] { COLOR } );
+	}
+
+	@Method(modid="shipwright")
+	@Override
+	public int getDensity()
+	{
+		return -4;
 	}
 }

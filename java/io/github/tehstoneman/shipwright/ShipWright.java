@@ -11,7 +11,11 @@ import net.minecraftforge.fml.common.event.FMLPreInitializationEvent;
 
 import org.apache.logging.log4j.Logger;
 
-@Mod( modid = ModInfo.MODID, name = ModInfo.NAME, version = ModInfo.VERSION, dependencies = ModInfo.DEPENDENCIES, acceptedMinecraftVersions = ModInfo.MINECRAFT )
+@Mod( modid						= ModInfo.MODID,
+	  name						= ModInfo.NAME,
+	  version					= ModInfo.VERSION,
+	  dependencies				= ModInfo.DEPENDENCIES,
+	  acceptedMinecraftVersions	= ModInfo.MINECRAFT )
 public class ShipWright
 {
 	public static ModMetadata	modMetadata;
@@ -30,45 +34,6 @@ public class ShipWright
 	{
 		logger = event.getModLog();
 		proxy.preInit();
-
-
-		/*
-		 * MaterialMap.registerMaterial("air", Material.air);
-		 * MaterialMap.registerMaterial("anvil", Material.anvil);
-		 * MaterialMap.registerMaterial("cactus", Material.cactus);
-		 * MaterialMap.registerMaterial("cake", Material.cake);
-		 * MaterialMap.registerMaterial("carpet", Material.carpet);
-		 * MaterialMap.registerMaterial("circuits", Material.circuits);
-		 * MaterialMap.registerMaterial("clay", Material.clay);
-		 * MaterialMap.registerMaterial("cloth", Material.cloth);
-		 * MaterialMap.registerMaterial("coral", Material.coral);
-		 * MaterialMap.registerMaterial("dragon_egg", Material.dragonEgg);
-		 * MaterialMap.registerMaterial("fire", Material.fire);
-		 * MaterialMap.registerMaterial("glass", Material.glass);
-		 * MaterialMap.registerMaterial("gourd", Material.gourd);
-		 * MaterialMap.registerMaterial("grass", Material.grass);
-		 * MaterialMap.registerMaterial("ground", Material.ground);
-		 * MaterialMap.registerMaterial("ice", Material.ice);
-		 * MaterialMap.registerMaterial("ice_packed", Material.packedIce);
-		 * MaterialMap.registerMaterial("iron", Material.iron);
-		 * MaterialMap.registerMaterial("lava", Material.lava);
-		 * MaterialMap.registerMaterial("leaves", Material.leaves);
-		 * MaterialMap.registerMaterial("piston", Material.piston);
-		 * MaterialMap.registerMaterial("plants", Material.plants);
-		 * MaterialMap.registerMaterial("portal", Material.portal);
-		 * MaterialMap.registerMaterial("redstone_light",
-		 * Material.redstoneLight);
-		 * MaterialMap.registerMaterial("rock", Material.rock);
-		 * MaterialMap.registerMaterial("sand", Material.sand);
-		 * MaterialMap.registerMaterial("snow", Material.snow);
-		 * MaterialMap.registerMaterial("snow_crafted", Material.craftedSnow);
-		 * MaterialMap.registerMaterial("sponge", Material.sponge);
-		 * MaterialMap.registerMaterial("tnt", Material.tnt);
-		 * MaterialMap.registerMaterial("vine", Material.vine);
-		 * MaterialMap.registerMaterial("water", Material.water);
-		 * MaterialMap.registerMaterial("web", Material.web);
-		 * MaterialMap.registerMaterial("wood", Material.wood);
-		 */
 
 		//modConfig = new Settings( new Configuration( event.getSuggestedConfigurationFile() ) );
 		//modConfig.loadAndSave();

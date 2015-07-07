@@ -1,5 +1,7 @@
 package io.github.tehstoneman.shipwright.block;
 
+import io.github.tehstoneman.shipapi.BlockDensity;
+
 import java.util.List;
 
 import net.minecraft.block.Block;
@@ -18,10 +20,13 @@ import net.minecraft.util.EnumFacing;
 import net.minecraft.util.EnumWorldBlockLayer;
 import net.minecraft.util.IStringSerializable;
 import net.minecraft.world.World;
+import net.minecraftforge.fml.common.Optional;
+import net.minecraftforge.fml.common.Optional.Method;
 import net.minecraftforge.fml.relauncher.Side;
 import net.minecraftforge.fml.relauncher.SideOnly;
 
-public class BlockGauge extends Block
+@Optional.Interface(iface="io.gethub.tehstoneman.shipapi.BlockDensity", modid="shipwright", striprefs=true)
+public class BlockGauge extends Block implements BlockDensity
 {
 	public static final PropertyDirection	FACING	= PropertyDirection.create( "facing", EnumFacing.Plane.HORIZONTAL );
 	public static final PropertyEnum		TYPE	= PropertyEnum.create( "type", EnumType.class );
@@ -155,5 +160,13 @@ public class BlockGauge extends Block
 			for (final EnumType type : values())
 				META_LOOKUP[type.getMetadata()] = type;
 		}
+	}
+
+	@Method(modid="shipwright")
+	@Override
+	public int getDensity()
+	{
+		// Does not contribute to overall density
+		return 0;
 	}
 }

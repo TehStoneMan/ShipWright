@@ -32,19 +32,26 @@ sourceSets
 	{
 	    java
 		{
-	        srcDirs=["$projectDir/java","$projectDir/api"]
+	        srcDirs=["$projectDir/src/main/java","$projectDir/api"]
 	    }
         resources
 		{
-            srcDirs=["#projectDir/resources"]
+            srcDirs=["#projectDir/src/main/resources"]
         }
     }
 }
 
 minecraft
 {
-    version = "1.8-11.14.2.1430"
-    runDir = "eclipse"
+    version = "1.8-11.14.3.1486"
+	if( file('../run').exists() )
+	{
+		assetDir = "../run/assets"
+	}
+	else
+	{
+		assetDir = "assets"
+	}
 }
 
 dependencies

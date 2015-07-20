@@ -1,0 +1,8 @@
+{
+    "variants": {
+        "facing=north": { "model": "shipwright:marker" },
+        "facing=east":  { "model": "shipwright:marker", "y": 90 },
+        "facing=south": { "model": "shipwright:marker", "y": 180 },
+        "facing=west":  { "model": "shipwright:marker", "y": 270 }
+    }
+}

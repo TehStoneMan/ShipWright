@@ -1,65 +1,95 @@
 package io.github.tehstoneman.shipwright.network;
 
+import org.apache.logging.log4j.LogManager;
+
+import io.github.tehstoneman.shipwright.ModInfo;
 import io.github.tehstoneman.shipwright.tileentity.TileEntityHelm;
 import io.netty.buffer.ByteBuf;
-import io.netty.channel.ChannelHandlerContext;
-import net.minecraft.entity.player.EntityPlayer;
+import net.minecraft.entity.player.EntityPlayerMP;
 import net.minecraft.tileentity.TileEntity;
 import net.minecraft.util.BlockPos;
+import net.minecraft.util.ChatComponentText;
+import net.minecraft.world.World;
+import net.minecraft.world.WorldServer;
+import net.minecraftforge.fml.common.network.ByteBufUtils;
+import net.minecraftforge.fml.common.network.simpleimpl.IMessage;
+import net.minecraftforge.fml.common.network.simpleimpl.IMessageHandler;
+import net.minecraftforge.fml.common.network.simpleimpl.MessageContext;
+import net.minecraftforge.fml.relauncher.Side;
 
-public class MsgClientRenameShip extends ASMessage
+public class MsgClientRenameShip implements IMessage
 {
-	public TileEntityHelm	tileEntity;
-	public String			newName;
-	
+	public String	newName;
+	public BlockPos	pos;
+
 	public MsgClientRenameShip()
 	{
-		tileEntity = null;
 		newName = "";
+		pos = new BlockPos( 0, 0, 0 );
 	}
-	
-	public MsgClientRenameShip(TileEntityHelm te, String name)
+
+	public MsgClientRenameShip( String newName, BlockPos pos )
 	{
-		tileEntity = te;
-		newName = name;
+		this.newName = newName;
+		this.pos = pos;
 	}
-	
+
 	@Override
-	public void encodeInto(ChannelHandlerContext ctx, ByteBuf buf)
+	public void fromBytes( ByteBuf buf )
 	{
-		buf.writeShort(newName.length());
-		buf.writeBytes(newName.getBytes());
-		buf.writeInt(tileEntity.getPos().getX());
-		buf.writeInt(tileEntity.getPos().getY());
-		buf.writeInt(tileEntity.getPos().getZ());
+		newName = ByteBufUtils.readUTF8String( buf );
+
+		final int x = buf.readInt();
+		final int y = buf.readInt();
+		final int z = buf.readInt();
+		pos = new BlockPos( x, y, z );
 	}
-	
+
 	@Override
-	public void decodeInto(ChannelHandlerContext ctx, ByteBuf buf, EntityPlayer player)
+	public void toBytes( ByteBuf buf )
 	{
-		byte[] ab = new byte[buf.readShort()];
-		buf.readBytes(ab);
-		newName = new String(ab);
-		
-		TileEntity te = player.worldObj.getTileEntity(new BlockPos(buf.readInt(), buf.readInt(), buf.readInt()));
-		if (te instanceof TileEntityHelm)
+		ByteBufUtils.writeUTF8String( buf, newName );
+		buf.writeInt( pos.getX() );
+		buf.writeInt( pos.getY() );
+		buf.writeInt( pos.getZ() );
+	}
+
+	public static class Handler implements IMessageHandler< MsgClientRenameShip, IMessage >
+	{
+		@Override
+		public IMessage onMessage( final MsgClientRenameShip message, MessageContext ctx )
 		{
-			tileEntity = (TileEntityHelm) te;
+			LogManager.getLogger( ModInfo.MODID ).info( "Rename Ship message recieved" );
+			if( ctx.side == Side.SERVER )
+			{
+				final EntityPlayerMP player = ctx.getServerHandler().playerEntity;
+				if( player != null )
+				{
+					final WorldServer playerWorldServer = player.getServerForPlayer();
+					playerWorldServer.addScheduledTask( new Runnable()
+					{
+						@Override
+						public void run()
+						{
+							processMessage( message, player );
+						}
+					} );
+				}
+			}
+			return null;
+		}
+
+		protected void processMessage( MsgClientRenameShip message, EntityPlayerMP player )
+		{
+			player.addChatMessage( new ChatComponentText( "Renaming Ship" ) );
+			final World world = player.worldObj;
+			final TileEntity tileEntity = world.getTileEntity( message.pos );
+
+			if( tileEntity != null && tileEntity instanceof TileEntityHelm )
+			{
+				( (TileEntityHelm)tileEntity ).getShipInfo().shipName = message.newName;
+				tileEntity.markDirty();
+			}
 		}
 	}
-	
-	@Override
-	public void handleClientSide(EntityPlayer player)
-	{
-	}
-	
-	@Override
-	public void handleServerSide(EntityPlayer player)
-	{
-		if (tileEntity != null)
-		{
-			tileEntity.getShipInfo().shipName = newName;
-		}
-	}
-	
 }

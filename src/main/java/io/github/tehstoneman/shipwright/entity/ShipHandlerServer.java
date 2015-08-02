@@ -45,8 +45,8 @@ public class ShipHandlerServer extends ShipHandlerCommon
 			ship.getCapabilities().spawnSeatEntities();
 		} else
 		{
-			MsgChunkBlockUpdate msg = new MsgChunkBlockUpdate(ship, list);
-			ShipWright.instance.pipeline.sendToAllAround(msg, new TargetPoint(ship.worldObj.provider.getDimensionId(), ship.posX, ship.posY, ship.posZ, 64D));
+			//MsgChunkBlockUpdate msg = new MsgChunkBlockUpdate(ship, list);
+			ShipWright.instance.network.sendToAllAround(new MsgChunkBlockUpdate(ship, list), new TargetPoint(ship.worldObj.provider.getDimensionId(), ship.posX, ship.posY, ship.posZ, 64D));
 		}
 		list.clear();
 		firstChunkUpdate = false;

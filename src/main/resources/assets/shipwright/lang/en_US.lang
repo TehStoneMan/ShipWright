@@ -1,5 +1,44 @@
 #ShipWright language file en_US
 
+gui.engine.title=Steam Engine Fuel
+
+gui.shipinv.align=Align
+gui.shipinv.decompile=Disassemble
+gui.shipinv.title=Ship Inventory
+
+gui.shipstatus.compile=Build
+gui.shipstatus.compilerresult=Status
+gui.shipstatus.count.balloon=Gas Bags
+gui.shipstatus.count.block=Blocks
+gui.shipstatus.count.tileentity=Tile Entities
+gui.shipstatus.done=Done Renaming
+gui.shipstatus.mass=Mass
+gui.shipstatus.massunit=kg
+gui.shipstatus.mount=Mount Ship
+gui.shipstatus.name=Name
+gui.shipstatus.rename=Rename Ship
+gui.shipstatus.result.busy=Assembling...
+gui.shipstatus.result.error=Error
+gui.shipstatus.result.inconsistent=Inconsistent
+gui.shipstatus.result.missingmarker=Missing Helm
+gui.shipstatus.result.none=Not Assembled
+gui.shipstatus.result.ok=OK
+gui.shipstatus.result.okwarn=Changes detected
+gui.shipstatus.result.overflow=Overflow
+gui.shipstatus.shiptype=Type
+gui.shipstatus.title=Ship Status
+gui.shipstatus.type.airship=Airship
+gui.shipstatus.type.boat=Ship
+gui.shipstatus.type.unknown=Unknown Type
+gui.shipstatus.undo=Undo
+
+key.shipwright.align=Align
+key.shipwright.brake=Brake
+key.shipwright.decompile=Disassemble
+key.shipwright.down=Descent
+key.shipwright.shipinv=Ship Inventory
+key.shipwright.up=Ascent
+
 tile.shipwright.balloon.black.name=Black Gas Bag
 tile.shipwright.balloon.blue.name=Blue Gas Bag
 tile.shipwright.balloon.brown.name=Brown Gas Bag
@@ -25,44 +64,3 @@ tile.shipwright.gauge.advanced.name=Advanced Instrument Panel
 tile.shipwright.gauge.basic.name=Instrument Panel
 tile.shipwright.marker.name=Ship's Helm
 tile.shipwright.seat.name=Passenger Seat
-
-key.archimedes.up=Ascent
-key.archimedes.down=Descent
-key.archimedes.brake=Brake
-key.archimedes.align=Align
-key.archimedes.decompile=Disassemble
-key.archimedes.shipinv=Ship Inventory
-
-gui.shipstatus.rename=Rename Ship
-
-gui.shipstatus.title=Ship Status
-gui.shipstatus.done=Done Renaming
-gui.shipstatus.compile=Assemble Ship
-gui.shipstatus.undo=Undo
-gui.shipstatus.mount=Mount Ship
-gui.shipstatus.name=Name
-gui.shipstatus.shiptype=Type
-gui.shipstatus.type.unknown=Unknown Type
-gui.shipstatus.type.airship=Airship
-gui.shipstatus.type.boat=Ship
-gui.shipstatus.compilerresult=Status
-gui.shipstatus.count.block=Blocks
-gui.shipstatus.count.balloon=Gas Bags
-gui.shipstatus.count.tileentity=Tile Entities
-gui.shipstatus.mass=Mass
-gui.shipstatus.massunit=kg
-
-gui.shipstatus.result.none=Not Assembled
-gui.shipstatus.result.ok=OK
-gui.shipstatus.result.okwarn=Changes detected
-gui.shipstatus.result.missingmarker=Missing Helm
-gui.shipstatus.result.overflow=Overflow
-gui.shipstatus.result.error=Error
-gui.shipstatus.result.busy=Assembling...
-gui.shipstatus.result.inconsistent=Inconsistent
-
-gui.shipinv.title=Ship Inventory
-gui.shipinv.decompile=Disassemble
-gui.shipinv.align=Align
-
-gui.engine.title=Steam Engine Fuel

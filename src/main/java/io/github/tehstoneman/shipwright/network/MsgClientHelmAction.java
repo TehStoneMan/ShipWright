@@ -2,75 +2,101 @@ package io.github.tehstoneman.shipwright.network;
 
 import io.github.tehstoneman.shipwright.tileentity.TileEntityHelm;
 import io.netty.buffer.ByteBuf;
-import io.netty.channel.ChannelHandlerContext;
-import net.minecraft.entity.player.EntityPlayer;
+import net.minecraft.entity.player.EntityPlayerMP;
 import net.minecraft.tileentity.TileEntity;
 import net.minecraft.util.BlockPos;
+import net.minecraft.util.ChatComponentText;
+import net.minecraft.world.World;
+import net.minecraft.world.WorldServer;
+import net.minecraftforge.fml.common.network.simpleimpl.IMessage;
+import net.minecraftforge.fml.common.network.simpleimpl.IMessageHandler;
+import net.minecraftforge.fml.common.network.simpleimpl.MessageContext;
+import net.minecraftforge.fml.relauncher.Side;
 
-public class MsgClientHelmAction extends ASMessage
+public class MsgClientHelmAction implements IMessage
 {
-	public TileEntityHelm	tileEntity;
 	public int				actionID;
-	
+	public BlockPos			pos;
+
+	public static final int	BUILD	= 0;
+	public static final int	MOUNT	= 1;
+	public static final int	UNDO	= 2;
+
 	public MsgClientHelmAction()
 	{
-		tileEntity = null;
 		actionID = -1;
+		pos = new BlockPos( 0, 0, 0 );
 	}
-	
-	public MsgClientHelmAction(TileEntityHelm tileentity, int id)
+
+	public MsgClientHelmAction( int actionID, BlockPos pos )
 	{
-		tileEntity = tileentity;
-		actionID = id;
+		this.actionID = actionID;
+		this.pos = pos;
 	}
-	
+
 	@Override
-	public void encodeInto(ChannelHandlerContext ctx, ByteBuf buf)
-	{
-		buf.writeByte(actionID);
-		buf.writeInt(tileEntity.getPos().getX());
-		buf.writeInt(tileEntity.getPos().getY());
-		buf.writeInt(tileEntity.getPos().getZ());
-	}
-	
-	@Override
-	public void decodeInto(ChannelHandlerContext ctx, ByteBuf buf, EntityPlayer player)
+	public void fromBytes( ByteBuf buf )
 	{
 		actionID = buf.readByte();
-		int x = buf.readInt();
-		int y = buf.readInt();
-		int z = buf.readInt();
-		TileEntity te = player.worldObj.getTileEntity(new BlockPos(x, y, z));
-		if (te instanceof TileEntityHelm)
-		{
-			tileEntity = (TileEntityHelm) te;
-		}
+		final int x = buf.readInt();
+		final int y = buf.readInt();
+		final int z = buf.readInt();
+		pos = new BlockPos( x, y, z );
 	}
-	
+
 	@Override
-	public void handleClientSide(EntityPlayer player)
+	public void toBytes( ByteBuf buf )
 	{
+		buf.writeByte( actionID );
+		buf.writeInt( pos.getX() );
+		buf.writeInt( pos.getY() );
+		buf.writeInt( pos.getZ() );
 	}
-	
-	@Override
-	public void handleServerSide(EntityPlayer player)
+
+	public static class Handler implements IMessageHandler< MsgClientHelmAction, IMessage >
 	{
-		if (tileEntity != null)
+		@Override
+		public IMessage onMessage( final MsgClientHelmAction message, MessageContext ctx )
 		{
-			switch (actionID)
+			if( ctx.side == Side.SERVER )
 			{
-			case 0:
-				tileEntity.assembleShip(player);
-				break;
-			case 1:
-				tileEntity.mountShip(player);
-				break;
-			case 2:
-				tileEntity.undoCompilation(player);
-				break;
-			default:
-				break;
+				final EntityPlayerMP player = ctx.getServerHandler().playerEntity;
+				if( player != null )
+				{
+					final WorldServer playerWorldServer = player.getServerForPlayer();
+					playerWorldServer.addScheduledTask( new Runnable()
+					{
+						@Override
+						public void run()
+						{
+							processMessage( message, player );
+						}
+					} );
+				}
 			}
+			return null;
+		}
+
+		protected void processMessage( MsgClientHelmAction message, EntityPlayerMP player )
+		{
+			final World world = player.worldObj;
+			final TileEntity tileEntity = world.getTileEntity( message.pos );
+
+			if( tileEntity != null && tileEntity instanceof TileEntityHelm )
+				switch( message.actionID )
+				{
+				case BUILD:
+					( (TileEntityHelm)tileEntity ).assembleShip( player );
+					break;
+				case MOUNT:
+					( (TileEntityHelm)tileEntity ).mountShip( player );
+					break;
+				case UNDO:
+					( (TileEntityHelm)tileEntity ).undoCompilation( player );
+					break;
+				default:
+					break;
+				}
 		}
 	}
 }

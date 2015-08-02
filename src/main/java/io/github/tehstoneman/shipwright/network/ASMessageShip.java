@@ -3,52 +3,79 @@ package io.github.tehstoneman.shipwright.network;
 import io.github.tehstoneman.shipwright.ModInfo;
 import io.github.tehstoneman.shipwright.entity.EntityShip;
 import io.netty.buffer.ByteBuf;
-import io.netty.channel.ChannelHandlerContext;
 
 import java.io.IOException;
 
 import net.minecraft.entity.Entity;
-import net.minecraft.entity.player.EntityPlayer;
+import net.minecraft.entity.player.EntityPlayerMP;
+import net.minecraft.world.WorldServer;
+import net.minecraftforge.fml.common.network.simpleimpl.IMessage;
+import net.minecraftforge.fml.common.network.simpleimpl.IMessageHandler;
+import net.minecraftforge.fml.common.network.simpleimpl.MessageContext;
+import net.minecraftforge.fml.relauncher.Side;
 
 import org.apache.logging.log4j.LogManager;
 
-public abstract class ASMessageShip extends ASMessage
+public abstract class ASMessageShip implements IMessage
 {
 	public EntityShip	ship;
-	
+	public int			entityID;
+
 	public ASMessageShip()
 	{
+		entityID = 0;
 		ship = null;
 	}
-	
-	public ASMessageShip(EntityShip entityship)
+
+	public ASMessageShip( EntityShip entityship )
 	{
+		entityID = entityship.getEntityId();
 		ship = entityship;
 	}
-	
-	/**
-	 * @throws IOException
-	 */
+
 	@Override
-	public void encodeInto(ChannelHandlerContext ctx, ByteBuf buf) throws IOException
+	public void fromBytes( ByteBuf buf )
 	{
-		buf.writeInt(ship.getEntityId());
+		final int entityid = buf.readInt();
 	}
-	
-	/**
-	 * @throws IOException
-	 */
+
 	@Override
-	public void decodeInto(ChannelHandlerContext ctx, ByteBuf buf, EntityPlayer player) throws IOException
+	public void toBytes( ByteBuf buf )
 	{
-		int entityid = buf.readInt();
-		Entity entity = player.worldObj.getEntityByID(entityid);
-		if (entity instanceof EntityShip)
+		buf.writeInt( ship.getEntityId() );
+	}
+
+	public static class Handler implements IMessageHandler< ASMessageShip, IMessage >
+	{
+		@Override
+		public IMessage onMessage( final ASMessageShip message, MessageContext ctx )
 		{
-			ship = (EntityShip) entity;
-		} else
+			if( ctx.side == Side.SERVER )
+			{
+				final EntityPlayerMP player = ctx.getServerHandler().playerEntity;
+				if( player != null )
+				{
+					final WorldServer playerWorldServer = player.getServerForPlayer();
+					playerWorldServer.addScheduledTask( new Runnable()
+					{
+						@Override
+						public void run()
+						{
+							processMessage( message, player );
+						}
+					} );
+				}
+			}
+			return null;
+		}
+
+		protected void processMessage( ASMessageShip message, EntityPlayerMP player )
 		{
-			LogManager.getLogger( ModInfo.MODID ).warn("Unable to find ship entity for ID " + entityid);
+			final Entity entity = player.worldObj.getEntityByID( message.entityID );
+			if( entity instanceof EntityShip )
+				message.ship = (EntityShip)entity;
+			else
+				LogManager.getLogger( ModInfo.MODID ).warn( "Unable to find ship entity for ID " + message.entityID );
 		}
 	}
 }

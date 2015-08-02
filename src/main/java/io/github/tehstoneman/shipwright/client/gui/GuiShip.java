@@ -82,13 +82,15 @@ public class GuiShip extends GuiContainer
 	{
 		if (button == btnDisassemble)
 		{
-			MsgClientShipAction msg = new MsgClientShipAction(ship, 1);
-			ShipWright.instance.pipeline.sendToServer(msg);
+			//MsgClientShipAction msg = new MsgClientShipAction(ship, 1);
+			//ShipWright.instance.pipeline.sendToServer(msg);
+			ShipWright.instance.network.sendToServer( new MsgClientShipAction( ship, 1 ) );
 			mc.displayGuiScreen(null);
 		} else if (button == btnAlign)
 		{
-			MsgClientShipAction msg = new MsgClientShipAction(ship, 3);
-			ShipWright.instance.pipeline.sendToServer(msg);
+			//MsgClientShipAction msg = new MsgClientShipAction(ship, 3);
+			//ShipWright.instance.pipeline.sendToServer(msg);
+			ShipWright.instance.network.sendToServer( new MsgClientShipAction( ship, 3 ) );
 			
 			ship.alignToGrid();
 		}

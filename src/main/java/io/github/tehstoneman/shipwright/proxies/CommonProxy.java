@@ -1,11 +1,11 @@
 package io.github.tehstoneman.shipwright.proxies;
 
+import io.github.tehstoneman.shipwright.ModInfo;
 import io.github.tehstoneman.shipwright.ShipWright;
 import io.github.tehstoneman.shipwright.block.ShipBlocks;
 import io.github.tehstoneman.shipwright.client.gui.ASGuiHandler;
 import io.github.tehstoneman.shipwright.inventory.ShipTab;
 import io.github.tehstoneman.shipwright.items.ShipItems;
-import io.github.tehstoneman.shipwright.network.ASMessagePipeline;
 import io.github.tehstoneman.shipwright.network.MsgAssembleResult;
 import io.github.tehstoneman.shipwright.network.MsgChunkBlockUpdate;
 import io.github.tehstoneman.shipwright.network.MsgClientHelmAction;
@@ -19,14 +19,13 @@ import io.github.tehstoneman.shipwright.network.MsgTileEntities;
 import io.github.tehstoneman.shipwright.util.CommonHookContainer;
 import io.github.tehstoneman.shipwright.util.CommonPlayerTicker;
 import io.github.tehstoneman.shipwright.util.ModSettings;
-import net.minecraft.init.Blocks;
-import net.minecraft.init.Items;
 import net.minecraft.item.ItemStack;
 import net.minecraft.item.crafting.IRecipe;
 import net.minecraftforge.common.MinecraftForge;
 import net.minecraftforge.fml.common.FMLCommonHandler;
 import net.minecraftforge.fml.common.network.NetworkRegistry;
 import net.minecraftforge.fml.common.registry.GameRegistry;
+import net.minecraftforge.fml.relauncher.Side;
 import net.minecraftforge.oredict.ShapedOreRecipe;
 
 public class CommonProxy
@@ -34,14 +33,28 @@ public class CommonProxy
 	public CommonPlayerTicker	playerTicker;
 	public CommonHookContainer	hookContainer;
 	public static ShipTab		shipTab;
-
+	
 	public void preInit()
 	{
 		ShipItems.registerItems();
 		ShipBlocks.registerBlocks();
 
 		shipTab = new ShipTab( "shipwright" );
-	}
+		
+		// Initialize network messaging
+		byte packetID = 0;
+		ShipWright.network = NetworkRegistry.INSTANCE.newSimpleChannel( ModInfo.MODID );
+		ShipWright.network.registerMessage( MsgClientHelmAction.Handler.class, MsgClientHelmAction.class, packetID++, Side.SERVER );
+		ShipWright.network.registerMessage( MsgClientShipAction.Handler.class, MsgClientShipAction.class, packetID++, Side.SERVER );
+		ShipWright.network.registerMessage( MsgClientRenameShip.Handler.class, MsgClientRenameShip.class, packetID++, Side.SERVER );
+		ShipWright.network.registerMessage( MsgClientOpenGUI.Handler.class,    MsgClientOpenGUI.class,    packetID++, Side.SERVER );
+		ShipWright.network.registerMessage( MsgAssembleResult.Handler.class,   MsgAssembleResult.class,   packetID++, Side.CLIENT );
+		ShipWright.network.registerMessage( MsgChunkBlockUpdate.Handler.class, MsgChunkBlockUpdate.class, packetID++, Side.SERVER );
+		ShipWright.network.registerMessage( MsgRequestShipData.Handler.class,  MsgRequestShipData.class,  packetID++, Side.SERVER );
+		ShipWright.network.registerMessage( MsgTileEntities.Handler.class,     MsgTileEntities.class,     packetID++, Side.CLIENT );
+		ShipWright.network.registerMessage( MsgControlInput.Handler.class,     MsgControlInput.class,     packetID++, Side.SERVER );
+		ShipWright.network.registerMessage( MsgFarInteract.Handler.class,      MsgFarInteract.class,      packetID++, Side.SERVER );
+}
 
 	public void init()
 	{
@@ -72,20 +85,6 @@ public class CommonProxy
 	public CommonHookContainer getHookContainer()
 	{
 		return new CommonHookContainer();
-	}
-
-	public void registerPackets( ASMessagePipeline pipeline )
-	{
-		pipeline.registerPacket( MsgClientHelmAction.class );
-		pipeline.registerPacket( MsgClientShipAction.class );
-		pipeline.registerPacket( MsgClientRenameShip.class );
-		pipeline.registerPacket( MsgClientOpenGUI.class );
-		pipeline.registerPacket( MsgAssembleResult.class );
-		pipeline.registerPacket( MsgChunkBlockUpdate.class );
-		pipeline.registerPacket( MsgRequestShipData.class );
-		pipeline.registerPacket( MsgTileEntities.class );
-		pipeline.registerPacket( MsgControlInput.class );
-		pipeline.registerPacket( MsgFarInteract.class );
 	}
 
 	public void registerKeyHandlers( ModSettings cfg )

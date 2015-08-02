@@ -6,23 +6,22 @@ import net.minecraft.entity.player.EntityPlayer;
 
 public class ShipHandlerClient extends ShipHandlerCommon
 {
-	public ShipHandlerClient(EntityShip entityship)
+	public ShipHandlerClient( EntityShip entityship )
 	{
-		super(entityship);
+		super( entityship );
 	}
-	
+
 	@Override
-	public boolean interact(EntityPlayer player)
+	public boolean interact( EntityPlayer player )
 	{
-		if (player.getDistanceSqToEntity(ship) >= 36D)
-		{
-			MsgFarInteract msg = new MsgFarInteract(ship);
-			ShipWright.instance.pipeline.sendToServer(msg);
-		}
-		
-		return super.interact(player);
+		if( player.getDistanceSqToEntity( ship ) >= 36D )
+			// MsgFarInteract msg = new MsgFarInteract(ship);
+			// ShipWright.instance.pipeline.sendToServer(msg);
+			ShipWright.network.sendToServer( new MsgFarInteract( ship ) );
+
+		return super.interact( player );
 	}
-	
+
 	@Override
 	public void onChunkUpdate()
 	{

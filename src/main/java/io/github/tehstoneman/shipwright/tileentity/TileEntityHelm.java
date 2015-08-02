@@ -81,7 +81,7 @@ public class TileEntityHelm extends TileEntity implements IShipTileEntity
 		if( !worldObj.isRemote )
 		{
 			prevResult = assembleResult;
-			final ChunkAssembler assembler = new ChunkAssembler( worldObj, pos.getX(), pos.getY(), pos.getZ() );
+			final ChunkAssembler assembler = new ChunkAssembler( worldObj, pos );
 			assembleResult = assembler.doAssemble();
 
 			sendAssembleResult( player, false );
@@ -164,8 +164,7 @@ public class TileEntityHelm extends TileEntity implements IShipTileEntity
 				res = prevResult;
 			else
 				res = assembleResult;
-			final MsgAssembleResult msg = new MsgAssembleResult( res, prev );
-			ShipWright.instance.pipeline.sendTo( msg, (EntityPlayerMP)player );
+			ShipWright.network.sendTo( new MsgAssembleResult( res, prev ), (EntityPlayerMP)player );
 		}
 	}
 

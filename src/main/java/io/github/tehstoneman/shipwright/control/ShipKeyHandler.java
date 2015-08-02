@@ -38,15 +38,15 @@ public class ShipKeyHandler
 		{
 			if (config.kbShipInv.getIsKeyPressed() && !kbShipGuiPrevState)
 			{
-				MsgClientOpenGUI msg = new MsgClientOpenGUI(2);
-				ShipWright.instance.pipeline.sendToServer(msg);
+				//MsgClientOpenGUI msg = new MsgClientOpenGUI(2);
+				ShipWright.instance.network.sendToServer(new MsgClientOpenGUI(2));
 			}
 			kbShipGuiPrevState = config.kbShipInv.getIsKeyPressed();
 			
 			if (config.kbDisassemble.getIsKeyPressed() && !kbDisassemblePrevState)
 			{
-				MsgClientShipAction msg = new MsgClientShipAction((EntityShip) e.player.ridingEntity, 1);
-				ShipWright.instance.pipeline.sendToServer(msg);
+				//MsgClientShipAction msg = new MsgClientShipAction((EntityShip) e.player.ridingEntity, 1);
+				ShipWright.instance.network.sendToServer(new MsgClientShipAction((EntityShip) e.player.ridingEntity, 1));
 			}
 			kbDisassemblePrevState = config.kbDisassemble.getIsKeyPressed();
 			

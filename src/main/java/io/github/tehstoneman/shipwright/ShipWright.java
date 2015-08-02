@@ -1,13 +1,10 @@
 package io.github.tehstoneman.shipwright;
 
-import java.io.File;
-
 import io.github.tehstoneman.shipwright.entity.EntityEntityAttachment;
 import io.github.tehstoneman.shipwright.entity.EntityParachute;
 import io.github.tehstoneman.shipwright.entity.EntitySeat;
 import io.github.tehstoneman.shipwright.entity.EntityShip;
 import io.github.tehstoneman.shipwright.mrot.MetaRotations;
-import io.github.tehstoneman.shipwright.network.ASMessagePipeline;
 import io.github.tehstoneman.shipwright.proxies.CommonProxy;
 import io.github.tehstoneman.shipwright.util.ModSettings;
 import net.minecraftforge.common.config.Configuration;
@@ -18,9 +15,8 @@ import net.minecraftforge.fml.common.SidedProxy;
 import net.minecraftforge.fml.common.event.FMLInitializationEvent;
 import net.minecraftforge.fml.common.event.FMLPostInitializationEvent;
 import net.minecraftforge.fml.common.event.FMLPreInitializationEvent;
+import net.minecraftforge.fml.common.network.simpleimpl.SimpleNetworkWrapper;
 import net.minecraftforge.fml.common.registry.EntityRegistry;
-
-import org.apache.logging.log4j.Logger;
 
 //@formatter:off
 @Mod( modid						= ModInfo.MODID,
@@ -35,13 +31,13 @@ public class ShipWright
 
 	@Mod.Instance( value = ModInfo.MODID )
 	public static ShipWright	instance;
+	public static SimpleNetworkWrapper	network;
 
 	// Define proxies
 	@SidedProxy( clientSide = ModInfo.PROXY_LOCATION + "ClientProxy", serverSide = ModInfo.PROXY_LOCATION + "CommonProxy" )
 	public static CommonProxy	proxy;
 
 	public ModSettings			modConfig;
-	public ASMessagePipeline	pipeline = new ASMessagePipeline();
 	public MetaRotations		metaRotations = new MetaRotations();
 
 	@EventHandler
@@ -54,7 +50,7 @@ public class ShipWright
 
 		metaRotations.setConfigDirectory( event.getModConfigurationDirectory() );
 
-		pipeline.initalize();
+		//pipeline.initalize();
 
 		modConfig.postLoad();
 	}
@@ -136,14 +132,12 @@ public class ShipWright
 		proxy.registerKeyHandlers( modConfig );
 		proxy.registerEventHandlers();
 		proxy.registerRenderers();
-		proxy.registerPackets( pipeline );
 	}
 
 	@EventHandler
 	public void postInitMod( FMLPostInitializationEvent event )
 	{
 		metaRotations.readMetaRotationFiles();
-		pipeline.postInitialize();
 	}
 
 	/**

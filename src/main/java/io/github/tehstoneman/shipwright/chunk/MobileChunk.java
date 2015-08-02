@@ -497,4 +497,16 @@ public class MobileChunk implements IBlockAccess
 		// TODO Auto-generated method stub
 		return null;
 	}
+
+	public boolean setBlockIDWithMetadata( BlockPos tPos, Block block, IBlockState blockMeta )
+	{
+		// TODO Auto-generated method stub
+		return false;
+	}
+
+	public void setTileEntity( BlockPos tPos, TileEntity tileentity )
+	{
+		// TODO Auto-generated method stub
+		
+	}
 }

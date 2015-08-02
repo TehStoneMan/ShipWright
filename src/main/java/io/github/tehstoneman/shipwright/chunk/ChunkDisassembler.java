@@ -78,9 +78,7 @@ public class ChunkDisassembler
 		final World world = ship.worldObj;
 		final MobileChunk chunk = ship.getShipChunk();
 		final AssembleResult result = new AssembleResult();
-		result.xOffset = Integer.MAX_VALUE;
-		result.yOffset = Integer.MAX_VALUE;
-		result.zOffset = Integer.MAX_VALUE;
+		result.offsetPos = new BlockPos( Integer.MAX_VALUE, Integer.MAX_VALUE, Integer.MAX_VALUE);
 
 		final int currentrot = Math.round( ship.rotationYaw / 90F ) & 3;
 		final int deltarot = -currentrot & 3;

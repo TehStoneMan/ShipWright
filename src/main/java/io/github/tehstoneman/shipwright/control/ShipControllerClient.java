@@ -8,10 +8,11 @@ import net.minecraft.entity.player.EntityPlayer;
 public class ShipControllerClient extends ShipControllerCommon
 {
 	@Override
-	public void updateControl(EntityShip ship, EntityPlayer player, int i)
+	public void updateControl( EntityShip ship, EntityPlayer player, int i )
 	{
-		super.updateControl(ship, player, i);
-		MsgControlInput msg = new MsgControlInput(ship, i);
-		ShipWright.instance.pipeline.sendToServer(msg);
+		super.updateControl( ship, player, i );
+		// MsgControlInput msg = new MsgControlInput(ship, i);
+		// ShipWright.instance.pipeline.sendToServer(msg);
+		ShipWright.network.sendToServer( new MsgControlInput( ship, i ) );
 	}
 }

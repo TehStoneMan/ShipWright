@@ -2,11 +2,12 @@ package io.github.tehstoneman.shipwright.network;
 
 import io.github.tehstoneman.shipwright.entity.EntityShip;
 import io.netty.buffer.ByteBuf;
-import io.netty.channel.ChannelHandlerContext;
-
-import java.io.IOException;
-
-import net.minecraft.entity.player.EntityPlayer;
+import net.minecraft.entity.player.EntityPlayerMP;
+import net.minecraft.world.WorldServer;
+import net.minecraftforge.fml.common.network.simpleimpl.IMessage;
+import net.minecraftforge.fml.common.network.simpleimpl.IMessageHandler;
+import net.minecraftforge.fml.common.network.simpleimpl.MessageContext;
+import net.minecraftforge.fml.relauncher.Side;
 
 public class MsgFarInteract extends ASMessageShip
 {
@@ -14,36 +15,52 @@ public class MsgFarInteract extends ASMessageShip
 	{
 		super();
 	}
-	
-	public MsgFarInteract(EntityShip entityship)
+
+	public MsgFarInteract( EntityShip entityship )
 	{
-		super(entityship);
+		super( entityship );
 	}
-	
+
 	@Override
-	public void encodeInto(ChannelHandlerContext ctx, ByteBuf buf) throws IOException
+	public void fromBytes( ByteBuf buf )
 	{
-		super.encodeInto(ctx, buf);
+		super.fromBytes( buf );
 	}
-	
+
 	@Override
-	public void decodeInto(ChannelHandlerContext ctx, ByteBuf buf, EntityPlayer player) throws IOException
+	public void toBytes( ByteBuf buf )
 	{
-		super.decodeInto(ctx, buf, player);
+		super.toBytes( buf );
 	}
-	
-	@Override
-	public void handleClientSide(EntityPlayer player)
+
+	public static class Handler implements IMessageHandler< MsgFarInteract, IMessage >
 	{
-	}
-	
-	@Override
-	public void handleServerSide(EntityPlayer player)
-	{
-		if (ship != null)
+		@Override
+		public IMessage onMessage( final MsgFarInteract message, MessageContext ctx )
 		{
-			player.interactWith(ship);
+			if( ctx.side == Side.SERVER )
+			{
+				final EntityPlayerMP player = ctx.getServerHandler().playerEntity;
+				if( player != null )
+				{
+					final WorldServer playerWorldServer = player.getServerForPlayer();
+					playerWorldServer.addScheduledTask( new Runnable()
+					{
+						@Override
+						public void run()
+						{
+							processMessage( message, player );
+						}
+					} );
+				}
+			}
+			return null;
+		}
+
+		protected void processMessage( MsgFarInteract message, EntityPlayerMP player )
+		{
+			if( message.ship != null )
+				player.interactWith( message.ship );
 		}
 	}
-	
 }

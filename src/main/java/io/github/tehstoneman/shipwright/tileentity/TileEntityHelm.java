@@ -1,7 +1,7 @@
 package io.github.tehstoneman.shipwright.tileentity;
 
 import io.github.tehstoneman.shipwright.ShipWright;
-import io.github.tehstoneman.shipwright.chunk.AssembleResult;
+import io.github.tehstoneman.shipwright.chunk.AssembleResultOld;
 import io.github.tehstoneman.shipwright.chunk.ChunkAssembler;
 import io.github.tehstoneman.shipwright.entity.EntityShip;
 import io.github.tehstoneman.shipwright.entity.IShipTileEntity;
@@ -22,7 +22,7 @@ public class TileEntityHelm extends TileEntity implements IShipTileEntity
 {
 	private EntityShip	activeShip;
 	private ShipInfo	info;
-	private AssembleResult	assembleResult, prevResult;
+	private AssembleResultOld	assembleResult, prevResult;
 
 	public TileEntityHelm()
 	{
@@ -37,12 +37,12 @@ public class TileEntityHelm extends TileEntity implements IShipTileEntity
 		return info;
 	}
 
-	public AssembleResult getAssembleResult()
+	public AssembleResultOld getAssembleResult()
 	{
 		return assembleResult;
 	}
 
-	public AssembleResult getPrevAssembleResult()
+	public AssembleResultOld getPrevAssembleResult()
 	{
 		return prevResult;
 	}
@@ -54,12 +54,12 @@ public class TileEntityHelm extends TileEntity implements IShipTileEntity
 		info = shipinfo;
 	}
 
-	public void setAssembleResult( AssembleResult result )
+	public void setAssembleResult( AssembleResultOld result )
 	{
 		assembleResult = result;
 	}
 
-	public void setPrevAssembleResult( AssembleResult result )
+	public void setPrevAssembleResult( AssembleResultOld result )
 	{
 		prevResult = result;
 	}
@@ -90,22 +90,22 @@ public class TileEntityHelm extends TileEntity implements IShipTileEntity
 			ChatComponentText c;
 			switch( assembleResult.getCode() )
 			{
-			case AssembleResult.RESULT_OK:
-			case AssembleResult.RESULT_OK_WITH_WARNINGS:
+			case AssembleResultOld.RESULT_OK:
+			case AssembleResultOld.RESULT_OK_WITH_WARNINGS:
 				return true;
-			case AssembleResult.RESULT_BLOCK_OVERFLOW:
+			case AssembleResultOld.RESULT_BLOCK_OVERFLOW:
 				c = new ChatComponentText( "Cannot create ship with more than " + ShipWright.instance.modConfig.maxShipChunkBlocks + " blocks" );
 				player.addChatMessage( c );
 				break;
-			case AssembleResult.RESULT_MISSING_MARKER:
+			case AssembleResultOld.RESULT_MISSING_MARKER:
 				c = new ChatComponentText( "Cannot create ship with no ship marker" );
 				player.addChatMessage( c );
 				break;
-			case AssembleResult.RESULT_ERROR_OCCURED:
+			case AssembleResultOld.RESULT_ERROR_OCCURED:
 				c = new ChatComponentText( "An error occured while assembling ship. See console log for details." );
 				player.addChatMessage( c );
 				break;
-			case AssembleResult.RESULT_NONE:
+			case AssembleResultOld.RESULT_NONE:
 				c = new ChatComponentText( "Nothing was assembled" );
 				player.addChatMessage( c );
 				break;
@@ -122,9 +122,9 @@ public class TileEntityHelm extends TileEntity implements IShipTileEntity
 			{
 				assembleResult.checkConsistent( worldObj );
 				sendAssembleResult( player, false );
-				if( assembleResult.getCode() == AssembleResult.RESULT_INCONSISTENT )
+				if( assembleResult.getCode() == AssembleResultOld.RESULT_INCONSISTENT )
 					return false;
-				if( assembleResult.getCode() == AssembleResult.RESULT_OK_WITH_WARNINGS )
+				if( assembleResult.getCode() == AssembleResultOld.RESULT_OK_WITH_WARNINGS )
 				{
 					final IChatComponent c = new ChatComponentText( "Ship contains changes" );
 					player.addChatMessage( c );
@@ -159,7 +159,7 @@ public class TileEntityHelm extends TileEntity implements IShipTileEntity
 	{
 		if( !worldObj.isRemote )
 		{
-			AssembleResult res;
+			AssembleResultOld res;
 			if( prev )
 				res = prevResult;
 			else
@@ -196,7 +196,7 @@ public class TileEntityHelm extends TileEntity implements IShipTileEntity
 				activeShip = (EntityShip)entity;
 		}
 		if( compound.hasKey( "res" ) )
-			assembleResult = new AssembleResult( compound.getCompoundTag( "res" ), worldObj );
+			assembleResult = new AssembleResultOld( compound.getCompoundTag( "res" ), worldObj );
 	}
 
 	@Override

@@ -72,7 +72,7 @@ public class EntityParachute extends Entity
 	}
 	
 	@Override
-	public AxisAlignedBB getBoundingBox()
+	public AxisAlignedBB getCollisionBoundingBox()
 	{
 		return null;
 	}

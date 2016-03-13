@@ -1,6 +1,6 @@
 package io.github.tehstoneman.shipwright.network;
 
-import io.github.tehstoneman.shipwright.chunk.AssembleResult;
+import io.github.tehstoneman.shipwright.chunk.AssembleResultOld;
 import io.github.tehstoneman.shipwright.inventory.ContainerHelm;
 import io.netty.buffer.ByteBuf;
 import net.minecraft.client.Minecraft;
@@ -13,7 +13,7 @@ import net.minecraftforge.fml.relauncher.Side;
 
 public class MsgAssembleResult implements IMessage
 {
-	public AssembleResult	result;
+	public AssembleResultOld	result;
 	public boolean			prevFlag;
 
 	public MsgAssembleResult()
@@ -22,7 +22,7 @@ public class MsgAssembleResult implements IMessage
 		prevFlag = false;
 	}
 
-	public MsgAssembleResult( AssembleResult result, boolean prevFlag )
+	public MsgAssembleResult( AssembleResultOld result, boolean prevFlag )
 	{
 		this.result = result;
 		this.prevFlag = prevFlag;
@@ -32,7 +32,7 @@ public class MsgAssembleResult implements IMessage
 	public void fromBytes( ByteBuf buf )
 	{
 		prevFlag = buf.readBoolean();
-		result = new AssembleResult( buf );
+		result = new AssembleResultOld( buf );
 	}
 
 	@Override
@@ -40,7 +40,7 @@ public class MsgAssembleResult implements IMessage
 	{
 		buf.writeBoolean( prevFlag );
 		if( result == null )
-			buf.writeByte( AssembleResult.RESULT_NONE );
+			buf.writeByte( AssembleResultOld.RESULT_NONE );
 		else
 		{
 			buf.writeByte( result.getCode() );

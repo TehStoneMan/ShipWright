@@ -1,6 +1,7 @@
 package io.github.tehstoneman.shipwright.block;
 
 import io.github.tehstoneman.shipwright.ShipWright;
+import io.github.tehstoneman.shipwright.api.IShipBlock;
 import io.github.tehstoneman.shipwright.tileentity.TileEntityHelm;
 import net.minecraft.block.Block;
 import net.minecraft.block.BlockContainer;
@@ -9,15 +10,15 @@ import net.minecraft.block.properties.IProperty;
 import net.minecraft.block.properties.PropertyDirection;
 import net.minecraft.block.state.BlockState;
 import net.minecraft.block.state.IBlockState;
-import net.minecraft.creativetab.CreativeTabs;
 import net.minecraft.entity.EntityLivingBase;
 import net.minecraft.entity.player.EntityPlayer;
 import net.minecraft.tileentity.TileEntity;
 import net.minecraft.util.BlockPos;
 import net.minecraft.util.EnumFacing;
 import net.minecraft.world.World;
+import net.minecraftforge.fml.common.Optional.Method;
 
-public class BlockHelm extends BlockContainer
+public class BlockHelm extends BlockContainer implements IShipBlock
 {
 	public static final PropertyDirection	FACING	= PropertyDirection.create( "facing", EnumFacing.Plane.HORIZONTAL );
 	private static String					name	= "marker";
@@ -70,7 +71,7 @@ public class BlockHelm extends BlockContainer
 	public IBlockState onBlockPlaced( World world, BlockPos pos, EnumFacing blockFaceClickedOn, float hitX, float hitY, float hitZ, int meta,
 			EntityLivingBase placer )
 	{
-		return getDefaultState().withProperty( FACING, placer.func_174811_aO().getOpposite() );
+		return getDefaultState().withProperty( FACING, placer.getHorizontalFacing().getOpposite() );
 	}
 
 	@Override
@@ -93,5 +94,29 @@ public class BlockHelm extends BlockContainer
 	public TileEntity createNewTileEntity( World worldIn, int meta )
 	{
 		return new TileEntityHelm();
+	}
+
+	@Override
+	public int getDensity()
+	{
+		return 700;
+	}
+
+	@Override
+	public boolean canConnectShip()
+	{
+		return true;
+	}
+
+	@Override
+	public boolean isStructureBlock()
+	{
+		return true;
+	}
+
+	@Override
+	public boolean isSupportBlock()
+	{
+		return false;
 	}
 }

@@ -1,6 +1,6 @@
 package io.github.tehstoneman.shipwright.block;
 
-import io.github.tehstoneman.shipapi.BlockDensity;
+import io.github.tehstoneman.shipwright.api.IBlockDensity;
 
 import java.util.List;
 
@@ -26,7 +26,7 @@ import net.minecraftforge.fml.relauncher.Side;
 import net.minecraftforge.fml.relauncher.SideOnly;
 
 @Optional.Interface(iface="io.gethub.tehstoneman.shipapi.BlockDensity", modid="shipwright", striprefs=true)
-public class BlockGauge extends Block implements BlockDensity
+public class BlockGauge extends Block implements IBlockDensity
 {
 	public static final PropertyDirection	FACING	= PropertyDirection.create( "facing", EnumFacing.Plane.HORIZONTAL );
 	public static final PropertyEnum		TYPE	= PropertyEnum.create( "type", EnumType.class );
@@ -114,7 +114,7 @@ public class BlockGauge extends Block implements BlockDensity
 			EntityLivingBase placer )
 	{
 		EnumType type = EnumType.byMetadata( meta );
-		EnumFacing enumFacing = ( placer == null ) ? EnumFacing.NORTH : placer.func_174811_aO().getOpposite();
+		EnumFacing enumFacing = ( placer == null ) ? EnumFacing.NORTH : placer.getHorizontalFacing().getOpposite();
 		return getDefaultState().withProperty( FACING, enumFacing ).withProperty( TYPE, type );
 	}
 

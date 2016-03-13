@@ -73,11 +73,11 @@ public class ChunkDisassembler
 		return true;
 	}
 
-	public AssembleResult doDisassemble()
+	public AssembleResultOld doDisassemble()
 	{
 		final World world = ship.worldObj;
 		final MobileChunk chunk = ship.getShipChunk();
-		final AssembleResult result = new AssembleResult();
+		final AssembleResultOld result = new AssembleResultOld();
 		result.offsetPos = new BlockPos( Integer.MAX_VALUE, Integer.MAX_VALUE, Integer.MAX_VALUE);
 
 		final int currentrot = Math.round( ship.rotationYaw / 90F ) & 3;
@@ -86,7 +86,7 @@ public class ChunkDisassembler
 		ship.rotationPitch = 0F;
 		final float yaw = currentrot * MathHelperMod.PI_HALF;
 
-		final boolean flag = world.getGameRules().getGameRuleBooleanValue( "doTileDrops" );
+		final boolean flag = world.getGameRules().getBoolean( "doTileDrops" );
 		world.getGameRules().setOrCreateGameRule( "doTileDrops", "false" );
 
 		final List< LocatedBlock > postlist = new ArrayList< LocatedBlock >( 4 );
@@ -112,7 +112,7 @@ public class ChunkDisassembler
 						continue;
 					tileentity = chunk.getTileEntity( new BlockPos(i, j, k ));
 
-					blockState = ShipWright.instance.metaRotations.getRotatedMeta( block, blockState, deltarot );
+					//blockState = ShipWright.instance.metaRotations.getRotatedMeta( block, blockState, deltarot );
 
 					vec = new Vec3( i + ox, j + oy, k + oz );
 					vec.rotateYaw( yaw );
@@ -137,6 +137,7 @@ public class ChunkDisassembler
 						world.setTileEntity( new BlockPos( ix, iy, iz ), tileentity );
 					}
 
+					/*
 					if( !ShipWright.instance.metaRotations.hasBlock( block ) )
 					{
 						// ShipMod.modLog.debug("Forge-rotating block " +
@@ -146,6 +147,7 @@ public class ChunkDisassembler
 						block = blockState.getBlock();
 						tileentity = world.getTileEntity( new BlockPos( ix, iy, iz ) );
 					}
+					*/
 
 					final LocatedBlock lb = new LocatedBlock( block, blockState, tileentity, new BlockPos( ix, iy, iz ) );
 					result.assembleBlock( lb );
@@ -168,7 +170,7 @@ public class ChunkDisassembler
 		ship.setDead();
 
 		if( result.shipMarkingBlock == null || !( result.shipMarkingBlock.tileEntity instanceof TileEntityHelm ) )
-			result.resultCode = AssembleResult.RESULT_MISSING_MARKER;
+			result.resultCode = AssembleResultOld.RESULT_MISSING_MARKER;
 		else
 			result.checkConsistent( world );
 		return result;

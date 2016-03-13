@@ -45,7 +45,7 @@ public class ShipModels
 
 		for( int i = 0; i < ItemDye.dyeColors.length; i++ )
 			modelMesher.register( itemBalloon, i,
-					new ModelResourceLocation( ShipWright.modAsset( BlockBalloon.getName() + "_" + EnumDyeColor.func_176764_b( i ).getName() ),
+					new ModelResourceLocation( ShipWright.modAsset( BlockBalloon.getName() + "_" + EnumDyeColor.byMetadata( i ).getName() ),
 							"inventory" ) );
 
 		modelMesher.register( itemBuffer,    0, new ModelResourceLocation( ShipWright.modAsset( BlockBuffer.getName() ),              "inventory" ) );

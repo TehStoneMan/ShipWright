@@ -6,7 +6,6 @@ import net.minecraft.block.properties.IProperty;
 import net.minecraft.block.properties.PropertyDirection;
 import net.minecraft.block.state.BlockState;
 import net.minecraft.block.state.IBlockState;
-import net.minecraft.creativetab.CreativeTabs;
 import net.minecraft.entity.EntityLivingBase;
 import net.minecraft.util.BlockPos;
 import net.minecraft.util.EnumFacing;
@@ -62,6 +61,6 @@ public class BlockSeat extends Block
 	public IBlockState onBlockPlaced( World world, BlockPos pos, EnumFacing blockFaceClickedOn, float hitX, float hitY,
 			float hitZ, int meta, EntityLivingBase placer )
 	{
-		return getDefaultState().withProperty( FACING, placer.func_174811_aO().getOpposite() );
+		return getDefaultState().withProperty( FACING, placer.getHorizontalFacing().getOpposite() );
 	}
 }

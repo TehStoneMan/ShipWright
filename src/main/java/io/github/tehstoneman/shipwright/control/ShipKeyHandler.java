@@ -1,14 +1,8 @@
 package io.github.tehstoneman.shipwright.control;
 
-import io.github.tehstoneman.shipwright.ShipWright;
-import io.github.tehstoneman.shipwright.entity.EntityShip;
-import io.github.tehstoneman.shipwright.network.MsgClientOpenGUI;
-import io.github.tehstoneman.shipwright.network.MsgClientShipAction;
 import io.github.tehstoneman.shipwright.util.ModSettings;
-import net.minecraftforge.fml.client.FMLClientHandler;
 import net.minecraftforge.fml.common.eventhandler.SubscribeEvent;
 import net.minecraftforge.fml.common.gameevent.InputEvent;
-import net.minecraftforge.fml.common.gameevent.TickEvent;
 import net.minecraftforge.fml.common.gameevent.TickEvent.PlayerTickEvent;
 import net.minecraftforge.fml.relauncher.Side;
 import net.minecraftforge.fml.relauncher.SideOnly;
@@ -34,6 +28,7 @@ public class ShipKeyHandler
 	@SubscribeEvent
 	public void updateControl(PlayerTickEvent e)
 	{
+		/*
 		if (e.phase == TickEvent.Phase.START && e.side == Side.CLIENT && e.player == FMLClientHandler.instance().getClientPlayerEntity() && e.player.ridingEntity instanceof EntityShip)
 		{
 			if (config.kbShipInv.getIsKeyPressed() && !kbShipGuiPrevState)
@@ -57,15 +52,19 @@ public class ShipKeyHandler
 				ship.getController().updateControl(ship, e.player, c);
 			}
 		}
+		*/
 	}
 	
 	public int getHeightControl()
 	{
+		/*
 		if (config.kbAlign.getIsKeyPressed()) return 4;
 		if (config.kbBrake.getIsKeyPressed()) return 3;
 		int vert = 0;
 		if (config.kbUp.getIsKeyPressed()) vert++;
 		if (config.kbDown.getIsKeyPressed()) vert--;
 		return vert == 0 ? 0 : vert < 0 ? 1 : vert > 0 ? 2 : 0;
+		*/
+		return 0;
 	}
 }

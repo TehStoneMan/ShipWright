@@ -1,14 +1,19 @@
-package io.github.tehstoneman.shipapi;
+package io.github.tehstoneman.shipwright.api;
 
 import net.minecraft.block.Block;
 import net.minecraft.block.BlockSlab;
 import net.minecraft.block.BlockStairs;
 import net.minecraft.block.material.Material;
-import net.minecraft.init.Blocks;
 import net.minecraft.util.Vec3;
 import net.minecraftforge.fluids.Fluid;
 
-public class ShipAPI
+/**
+ * Central access point for all ShipWright API calls
+ *
+ * @author TehStoneMan
+ *
+ */
+public class ShipWrightAPI
 {
 	/**
 	 * Return the relative density of a given block.
@@ -18,7 +23,8 @@ public class ShipAPI
 	 */
 	public static int getDensity( Block block )
 	{
-		if (block instanceof BlockDensity) return ((BlockDensity) block).getDensity();
+		if( block instanceof IBlockDensity )
+			return ( (IBlockDensity)block ).getDensity();
 
 		// Calculate the density of a block that does not implement BlockDensity
 
@@ -27,17 +33,17 @@ public class ShipAPI
 		// Default density of wood
 		int density = 700;
 
-		if (BlockDensity.materialDensityMap.containsKey( material ))
-			density = BlockDensity.materialDensityMap.get( material );
+		if( IBlockDensity.materialDensityMap.containsKey( material ) )
+			density = IBlockDensity.materialDensityMap.get( material );
 
-		if (BlockDensity.blockDensityMap.containsKey( block.getUnlocalizedName() ))
-			density = BlockDensity.blockDensityMap.get( block.getUnlocalizedName() );
+		if( IBlockDensity.blockDensityMap.containsKey( block.getUnlocalizedName() ) )
+			density = IBlockDensity.blockDensityMap.get( block.getUnlocalizedName() );
 
-		if (block instanceof BlockSlab && !((BlockSlab) block).isDouble())
-			density = (int) Math.round( density * 0.5 );
+		if( block instanceof BlockSlab && !( (BlockSlab)block ).isDouble() )
+			density = (int)Math.round( density * 0.5 );
 
-		if (block instanceof BlockStairs)
-			density = (int) Math.round( density * 0.75 );
+		if( block instanceof BlockStairs )
+			density = (int)Math.round( density * 0.75 );
 
 		return density;
 	}
@@ -47,7 +53,7 @@ public class ShipAPI
 	 */
 	public static void addDensity( Material material, int density )
 	{
-		BlockDensity.materialDensityMap.put( material, density );
+		IBlockDensity.materialDensityMap.put( material, density );
 	}
 
 	/**
@@ -55,7 +61,7 @@ public class ShipAPI
 	 */
 	public static void addDensity( Block block, int density )
 	{
-		BlockDensity.blockDensityMap.put( block.getUnlocalizedName(), density );
+		IBlockDensity.blockDensityMap.put( block.getUnlocalizedName(), density );
 	}
 
 	/**
@@ -63,7 +69,7 @@ public class ShipAPI
 	 */
 	public static double getBuoyancyInAir( int density )
 	{
-		return (double) density / getDensity( Blocks.air );
+		return density * 1.5;
 	}
 
 	/**
@@ -71,7 +77,7 @@ public class ShipAPI
 	 */
 	public static double getBuoyancyInFluid( int density, Fluid fluid )
 	{
-		return (double) density / (double) fluid.getDensity();
+		return (double)density / (double)fluid.getDensity();
 	}
 
 	/**
@@ -80,7 +86,8 @@ public class ShipAPI
 	 */
 	public static Vec3 getThrustVector( Block block )
 	{
-		if (block instanceof ThrustEngine) return ((ThrustEngine) block).getThrustVector();
+		if( block instanceof ThrustEngine )
+			return ( (ThrustEngine)block ).getThrustVector();
 
 		return new Vec3( 0.0, 0.0, 0.0 );
 	}

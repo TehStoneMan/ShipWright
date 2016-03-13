@@ -2,7 +2,7 @@ package io.github.tehstoneman.shipwright.entity;
 
 import io.github.tehstoneman.shipwright.ModInfo;
 import io.github.tehstoneman.shipwright.ShipWright;
-import io.github.tehstoneman.shipwright.chunk.AssembleResult;
+import io.github.tehstoneman.shipwright.chunk.AssembleResultOld;
 import io.github.tehstoneman.shipwright.chunk.ChunkDisassembler;
 import io.github.tehstoneman.shipwright.chunk.ChunkIO;
 import io.github.tehstoneman.shipwright.chunk.MobileChunk;
@@ -256,7 +256,7 @@ public class EntityShip extends EntityBoat implements IEntityAdditionalSpawnData
 					+ shipChunk.getCenterX(), posY + height, posZ + shipChunk.getCenterZ() ) );
 			// boundingBox.setBounds(posX - shipChunk.getCenterX(), posY, posZ - shipChunk.getCenterZ(), posX + shipChunk.getCenterX(), posY + height, posZ +
 			// shipChunk.getCenterZ());
-			AABBRotator.rotateAABBAroundY( getBoundingBox(), posX, posZ, (float)Math.toRadians( rotationYaw ) );
+			AABBRotator.rotateAABBAroundY( getCollisionBoundingBox(), posX, posZ, (float)Math.toRadians( rotationYaw ) );
 		}
 	}
 
@@ -409,16 +409,16 @@ public class EntityShip extends EntityBoat implements IEntityAdditionalSpawnData
 
 		// START outer forces
 		final byte b0 = 5;
-		final int bpermeter = (int)( b0 * ( getBoundingBox().maxY - getBoundingBox().minY ) );
+		final int bpermeter = (int)( b0 * ( getCollisionBoundingBox().maxY - getCollisionBoundingBox().minY ) );
 		float watervolume = 0F;
 		final AxisAlignedBB axisalignedbb = new AxisAlignedBB( 0D, 0D, 0D, 0D, 0D, 0D );
 		int belowwater = 0;
 		for( ; belowwater < bpermeter; belowwater++ )
 		{
-			final double d1 = getBoundingBox().minY + ( getBoundingBox().maxY - getBoundingBox().minY ) * belowwater / bpermeter;
-			final double d2 = getBoundingBox().minY + ( getBoundingBox().maxY - getBoundingBox().minY ) * ( belowwater + 1 ) / bpermeter;
-			setEntityBoundingBox( new AxisAlignedBB( getBoundingBox().minX, d1, getBoundingBox().minZ, getBoundingBox().maxX, d2,
-					getBoundingBox().maxZ ) );
+			final double d1 = getCollisionBoundingBox().minY + ( getCollisionBoundingBox().maxY - getCollisionBoundingBox().minY ) * belowwater / bpermeter;
+			final double d2 = getCollisionBoundingBox().minY + ( getCollisionBoundingBox().maxY - getCollisionBoundingBox().minY ) * ( belowwater + 1 ) / bpermeter;
+			setEntityBoundingBox( new AxisAlignedBB( getCollisionBoundingBox().minX, d1, getCollisionBoundingBox().minZ, getCollisionBoundingBox().maxX, d2,
+					getCollisionBoundingBox().maxZ ) );
 
 			if( !isAABBInLiquidNotFall( worldObj, axisalignedbb ) )
 				break;
@@ -541,7 +541,7 @@ public class EntityShip extends EntityBoat implements IEntityAdditionalSpawnData
 		if( !worldObj.isRemote )
 		{
 			@SuppressWarnings( "unchecked" )
-			final List< Entity > list = worldObj.getEntitiesWithinAABBExcludingEntity( this, getBoundingBox().expand( 0.2D, 0.0D, 0.2D ) );
+			final List< Entity > list = worldObj.getEntitiesWithinAABBExcludingEntity( this, getCollisionBoundingBox().expand( 0.2D, 0.0D, 0.2D ) );
 			if( list != null && !list.isEmpty() )
 				for( final Entity entity : list )
 					if( entity != riddenByEntity && entity.canBePushed() )
@@ -840,14 +840,14 @@ public class EntityShip extends EntityBoat implements IEntityAdditionalSpawnData
 	public AxisAlignedBB getCollisionBox( Entity entity )
 	{
 		return entity instanceof EntitySeat || entity.ridingEntity instanceof EntitySeat || entity instanceof EntityLiving ? null : entity
-				.getBoundingBox();
+				.getCollisionBoundingBox();
 		// return null;
 	}
 
 	@Override
-	public AxisAlignedBB getBoundingBox()
+	public AxisAlignedBB getCollisionBoundingBox()
 	{
-		return getBoundingBox();
+		return getEntityBoundingBox();
 	}
 
 	@Override
@@ -886,14 +886,16 @@ public class EntityShip extends EntityBoat implements IEntityAdditionalSpawnData
 	}
 
 	// updateFallDistance()
+	/*
 	@Override
-	protected void func_180433_a( double distancefallen, boolean onground, Block block, BlockPos blockPos )
+	protected void updateFallDistance( double distancefallen, boolean onground, Block block, BlockPos blockPos )
 	{
 		if( !isFlying() )
 		{
 
 		}
 	}
+	*/
 
 	@Override
 	public void fall( float distance, float damageMultiplier )
@@ -993,7 +995,7 @@ public class EntityShip extends EntityBoat implements IEntityAdditionalSpawnData
 			return false;
 		}
 
-		final AssembleResult result = disassembler.doDisassemble();
+		final AssembleResultOld result = disassembler.doDisassemble();
 		if( result.getShipMarker() != null )
 		{
 			final TileEntity te = result.getShipMarker().tileEntity;

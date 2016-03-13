@@ -1,5 +1,7 @@
 package io.github.tehstoneman.shipwright.entity;
 
+import io.github.tehstoneman.shipwright.entity.EntityShip;
+
 public interface IShipTileEntity
 {
 	/**

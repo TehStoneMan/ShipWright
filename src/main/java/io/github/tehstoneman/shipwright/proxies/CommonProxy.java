@@ -19,6 +19,9 @@ import io.github.tehstoneman.shipwright.network.MsgTileEntities;
 import io.github.tehstoneman.shipwright.util.CommonHookContainer;
 import io.github.tehstoneman.shipwright.util.CommonPlayerTicker;
 import io.github.tehstoneman.shipwright.util.ModSettings;
+import net.minecraft.init.Blocks;
+import net.minecraft.init.Items;
+import net.minecraft.item.Item;
 import net.minecraft.item.ItemStack;
 import net.minecraft.item.crafting.IRecipe;
 import net.minecraftforge.common.MinecraftForge;
@@ -33,14 +36,15 @@ public class CommonProxy
 	public CommonPlayerTicker	playerTicker;
 	public CommonHookContainer	hookContainer;
 	public static ShipTab		shipTab;
-	
+
 	public void preInit()
 	{
 		ShipItems.registerItems();
 		ShipBlocks.registerBlocks();
 
 		shipTab = new ShipTab( "shipwright" );
-		
+
+		//@formatter:off
 		// Initialize network messaging
 		byte packetID = 0;
 		ShipWright.network = NetworkRegistry.INSTANCE.newSimpleChannel( ModInfo.MODID );
@@ -54,28 +58,48 @@ public class CommonProxy
 		ShipWright.network.registerMessage( MsgTileEntities.Handler.class,     MsgTileEntities.class,     packetID++, Side.CLIENT );
 		ShipWright.network.registerMessage( MsgControlInput.Handler.class,     MsgControlInput.class,     packetID++, Side.SERVER );
 		ShipWright.network.registerMessage( MsgFarInteract.Handler.class,      MsgFarInteract.class,      packetID++, Side.SERVER );
-}
+		//@formatter:on
+	}
 
 	public void init()
 	{
+		final Item ASHelm = GameRegistry.findItem( "ArchimedesShipsPlus", "marker" );
 		// Recipes
-		IRecipe wheelRecipe = new ShapedOreRecipe( new ItemStack( ShipItems.wheel ), new Object[] {
-			"/P/",
-			"PIP",
-			"/P/", '/', "stickWood",
-				   'P', "plankWood",
-				   'I',	"ingotIron" } );
-		GameRegistry.addRecipe( wheelRecipe );
+		if( ASHelm == null )
+		{
+			final IRecipe wheelRecipe = new ShapedOreRecipe( new ItemStack( ShipItems.wheel ),
+					new Object[] { "P/P",
+								   "/I/",
+								   "P/P", '/', "stickWood",
+								   		  'P', "plankWood",
+								   		  'I', "ingotIron" } );
+			GameRegistry.addRecipe( wheelRecipe );
 
-		IRecipe helmRecipe = new ShapedOreRecipe( new ItemStack( ShipBlocks.helm ), new Object[] {
-			"PIP",
-			"IWI",
-			"PRP", 'W', ShipItems.wheel,
-				   'P', "plankWood",
-				   'I',	"ingotIron",
-				   'R',	"dustRedstone" } );
-		GameRegistry.addRecipe( helmRecipe );
-}
+			final IRecipe helmRecipe = new ShapedOreRecipe( new ItemStack( ShipBlocks.helm ),
+					new Object[] { "PPP",
+								   "IWI",
+								   "BRB", 'W', ShipItems.wheel,
+								   		  'P', "plankWood",
+								   		  'I', "ingotIron",
+								   		  'R', Blocks.piston,
+								   		  'B', Items.boat } );
+			GameRegistry.addRecipe( helmRecipe );
+		}
+		else
+		{
+			// In order to avoid conflicts with Archimedes' Ships Plus mod, if it is installed, replace our ship's wheel with their helm block, as they both use
+			// the same crafting recipe
+			final IRecipe helmRecipe = new ShapedOreRecipe( new ItemStack( ShipBlocks.helm ),
+					new Object[] { "PPP",
+								   "IWI",
+								   "BRB", 'W', ASHelm,
+								   		  'P', "plankWood",
+								   		  'I', "ingotIron",
+								   		  'R', Blocks.piston,
+								   		  'B', Items.boat } );
+			GameRegistry.addRecipe( helmRecipe );
+		}
+	}
 
 	public void postInit()
 	{

@@ -1,4 +1,4 @@
-package io.github.tehstoneman.shipapi;
+package io.github.tehstoneman.shipwright.api;
 
 import java.util.HashMap;
 import java.util.Map;
@@ -6,8 +6,18 @@ import java.util.Map;
 import net.minecraft.block.material.Material;
 import net.minecraft.init.Blocks;
 
-public interface BlockDensity
+/**
+ * Describes the density of a block.
+ * Implement this to be able to assign a density to your block.
+ * 
+ * @author TehStoneMan
+ *
+ */
+public interface IBlockDensity
 {
+	/**
+	 * A list of densities for vanilla materials
+	 */
 	public static Map< Material, Integer >	materialDensityMap	= new HashMap< Material, Integer >()
 		{{
 			put( Material.air,				   0 );
@@ -47,6 +57,9 @@ public interface BlockDensity
 			put( Material.wood,				 700 );
 		}};
 
+		/**
+		 * A list of materials for various vanilla blocks
+		 */
 	public static Map<String, Integer>	blockDensityMap		= new HashMap<String, Integer>()
 		{{
 			put( Blocks.bedrock.getUnlocalizedName(),		100000 );	
@@ -56,5 +69,10 @@ public interface BlockDensity
 			put( Blocks.torch.getUnlocalizedName(),		       100 );	
 		}};
 	
+	/**
+	 * Returns the density of this block
+	 * 
+	 * @return
+	 */
 	public int getDensity();
 }

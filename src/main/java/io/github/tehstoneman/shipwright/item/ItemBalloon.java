@@ -23,7 +23,7 @@ public class ItemBalloon extends ItemBlock
 	@Override
 	public String getUnlocalizedName( ItemStack stack )
 	{
-		final EnumDyeColor color = EnumDyeColor.func_176764_b( stack.getMetadata() );
+		final EnumDyeColor color = EnumDyeColor.byMetadata( stack.getMetadata() );
 		return super.getUnlocalizedName() + "." + color.toString();
 	}
 }

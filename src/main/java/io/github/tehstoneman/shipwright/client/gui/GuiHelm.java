@@ -2,27 +2,29 @@ package io.github.tehstoneman.shipwright.client.gui;
 
 import io.github.tehstoneman.shipwright.ModInfo;
 import io.github.tehstoneman.shipwright.ShipWright;
-import io.github.tehstoneman.shipwright.chunk.AssembleResult;
+import io.github.tehstoneman.shipwright.chunk.AssembleResultOld;
 import io.github.tehstoneman.shipwright.inventory.ContainerHelm;
 import io.github.tehstoneman.shipwright.network.MsgClientHelmAction;
 import io.github.tehstoneman.shipwright.network.MsgClientRenameShip;
 import io.github.tehstoneman.shipwright.tileentity.TileEntityHelm;
 
 import java.io.IOException;
+import java.util.List;
 import java.util.Locale;
 
 import net.minecraft.client.audio.PositionedSoundRecord;
 import net.minecraft.client.audio.SoundHandler;
+import net.minecraft.client.gui.FontRenderer;
 import net.minecraft.client.gui.GuiButton;
 import net.minecraft.client.gui.GuiTextField;
 import net.minecraft.client.gui.inventory.GuiContainer;
+import net.minecraft.client.renderer.GlStateManager;
 import net.minecraft.client.resources.I18n;
 import net.minecraft.entity.player.EntityPlayer;
 import net.minecraft.util.ResourceLocation;
 import net.minecraft.util.StatCollector;
 
 import org.lwjgl.input.Keyboard;
-import org.lwjgl.opengl.GL11;
 
 enum Buttons
 {
@@ -52,14 +54,17 @@ enum Buttons
 
 public class GuiHelm extends GuiContainer
 {
-	public static final ResourceLocation	BACKGROUND_TEXTURE	= new ResourceLocation( ModInfo.MODID, "textures/gui/shipstatus.png" );
+	private static final ResourceLocation	helmGuiBackground		= new ResourceLocation( ModInfo.MODID, "textures/gui/shipstatus.png" );
+	private static final ResourceLocation	creativeInventoryTabs	= new ResourceLocation( "textures/gui/container/creative_inventory/tabs.png" );
 
 	public final TileEntityHelm				tileEntity;
 	public final EntityPlayer				player;
 
-	private GuiButton						btnAssemble, btnUndo, btnMount;
+	private GuiButton						btnAssemble;
+	// private GuiButton btnUndo, btnMount;
 	private GuiTextField					txtShipName;
 	private boolean							busyCompiling;
+	//private static int						selectedTabIndex		= ShipGuiTabs.tabInfo.getTabIndex();
 
 	public GuiHelm( TileEntityHelm tileentity, EntityPlayer entityplayer )
 	{
@@ -68,7 +73,7 @@ public class GuiHelm extends GuiContainer
 		player = entityplayer;
 
 		xSize = 176;
-		ySize = 132;
+		ySize = 150;
 	}
 
 	@Override
@@ -76,28 +81,126 @@ public class GuiHelm extends GuiContainer
 	{
 		super.initGui();
 
+		buttonList.clear();
 		Keyboard.enableRepeatEvents( true );
 
-		buttonList.clear();
-
-		btnAssemble = new GuiButton( Buttons.COMPILE.getValue(), guiLeft + 7, guiTop + 85, 80, 20, I18n.format( "gui.shipstatus.compile" ) );
-		buttonList.add( btnAssemble );
-
-		btnUndo = new GuiButton( Buttons.UNDO.getValue(), guiLeft + 89, guiTop + 85, 80, 20, I18n.format( "gui.shipstatus.undo" ) );
-		btnUndo.enabled = tileEntity.getPrevAssembleResult() != null && tileEntity.getPrevAssembleResult().getCode() != AssembleResult.RESULT_NONE;
-		buttonList.add( btnUndo );
-
-		btnMount = new GuiButton( Buttons.MOUNT.getValue(), guiLeft + 89, guiTop + 105, 80, 20, I18n.format( "gui.shipstatus.mount" ) );
-		btnMount.enabled = tileEntity.getAssembleResult() != null && tileEntity.getAssembleResult().getCode() == AssembleResult.RESULT_OK;
-		buttonList.add( btnMount );
-
-		txtShipName = new GuiTextField( 0, fontRendererObj, guiLeft + 20, guiTop + 6, 120, 10 );
+		txtShipName = new GuiTextField( 0, fontRendererObj, guiLeft + 20, guiTop + 6, 120, fontRendererObj.FONT_HEIGHT );
 		txtShipName.setMaxStringLength( 127 );
 		txtShipName.setEnableBackgroundDrawing( false );
 		txtShipName.setVisible( true );
 		txtShipName.setCanLoseFocus( false );
 		txtShipName.setTextColor( 0xFFFFFF );
 		txtShipName.setText( tileEntity.getShipInfo().shipName );
+
+		//final int i = selectedTabIndex;
+		//selectedTabIndex = -1;
+
+		//setCurrentGuiTab( ShipGuiTabs.shipGuiTabArray[i] );
+
+		String btnText = "gui.shipstatus.compile";
+		if( tileEntity.getAssembleResult() != null && tileEntity.getAssembleResult().getCode() == AssembleResultOld.RESULT_OK )
+			btnText = "gui.shipstatus.refresh";
+		btnAssemble = new GuiButton( Buttons.COMPILE.getValue(), guiLeft + 7, guiTop + 123, 80, 20, I18n.format( btnText ) );
+		buttonList.add( btnAssemble );
+
+		/*
+		 * btnUndo = new GuiButton( Buttons.UNDO.getValue(), guiLeft + 89, guiTop + 85, 80, 20, I18n.format( "gui.shipstatus.undo" ) );
+		 * btnUndo.enabled = tileEntity.getPrevAssembleResult() != null && tileEntity.getPrevAssembleResult().getCode() != AssembleResult.RESULT_NONE;
+		 * buttonList.add( btnUndo );
+		 */
+
+		/*
+		 * btnMount = new GuiButton( Buttons.MOUNT.getValue(), guiLeft + 89, guiTop + 105, 80, 20, I18n.format( "gui.shipstatus.mount" ) );
+		 * btnMount.enabled = tileEntity.getAssembleResult() != null && tileEntity.getAssembleResult().getCode() == AssembleResult.RESULT_OK;
+		 * buttonList.add( btnMount );
+		 */
+	}
+
+	private void setCurrentGuiTab( ShipGuiTabs shipGuiTabs )
+	{
+		if( shipGuiTabs == null )
+			return;
+		//final int i = selectedTabIndex;
+		//selectedTabIndex = shipGuiTabs.getTabIndex();
+		dragSplittingSlots.clear();
+
+		/*
+		 * if (shipGuiTabs == CreativeTabs.tabInventory)
+		 * {
+		 * Container container = this.mc.thePlayer.inventoryContainer;
+		 *
+		 * if (this.field_147063_B == null)
+		 * {
+		 * this.field_147063_B = guicontainercreative$containercreative.inventorySlots;
+		 * }
+		 *
+		 * guicontainercreative$containercreative.inventorySlots = Lists.<Slot>newArrayList();
+		 *
+		 * for (int j = 0; j < container.inventorySlots.size(); ++j)
+		 * {
+		 * Slot slot = new GuiContainerCreative.CreativeSlot((Slot)container.inventorySlots.get(j), j);
+		 * guicontainercreative$containercreative.inventorySlots.add(slot);
+		 *
+		 * if (j >= 5 && j < 9)
+		 * {
+		 * int j1 = j - 5;
+		 * int k1 = j1 / 2;
+		 * int l1 = j1 % 2;
+		 * slot.xDisplayPosition = 9 + k1 * 54;
+		 * slot.yDisplayPosition = 6 + l1 * 27;
+		 * }
+		 * else if (j >= 0 && j < 5)
+		 * {
+		 * slot.yDisplayPosition = -2000;
+		 * slot.xDisplayPosition = -2000;
+		 * }
+		 * else if (j < container.inventorySlots.size())
+		 * {
+		 * int k = j - 9;
+		 * int l = k % 9;
+		 * int i1 = k / 9;
+		 * slot.xDisplayPosition = 9 + l * 18;
+		 *
+		 * if (j >= 36)
+		 * {
+		 * slot.yDisplayPosition = 112;
+		 * }
+		 * else
+		 * {
+		 * slot.yDisplayPosition = 54 + i1 * 18;
+		 * }
+		 * }
+		 * }
+		 *
+		 * this.field_147064_C = new Slot(field_147060_v, 0, 173, 112);
+		 * guicontainercreative$containercreative.inventorySlots.add(this.field_147064_C);
+		 * }
+		 * else if (i == CreativeTabs.tabInventory.getTabIndex())
+		 * {
+		 * guicontainercreative$containercreative.inventorySlots = this.field_147063_B;
+		 * this.field_147063_B = null;
+		 * }
+		 *
+		 * if (this.searchField != null)
+		 * {
+		 * if (shipGuiTabs.hasSearchBar())
+		 * {
+		 * this.searchField.setVisible(true);
+		 * this.searchField.setCanLoseFocus(false);
+		 * this.searchField.setFocused(true);
+		 * this.searchField.setText("");
+		 * this.searchField.width = shipGuiTabs.getSearchbarWidth();
+		 * this.searchField.xPosition = this.guiLeft + (82 + 89 ) - this.searchField.width;
+		 * this.updateCreativeSearch();
+		 * }
+		 * else
+		 * {
+		 * this.searchField.setVisible(false);
+		 * this.searchField.setCanLoseFocus(true);
+		 * this.searchField.setFocused(false);
+		 * }
+		 * }
+		 */
 	}
 
 	@Override
@@ -111,15 +214,29 @@ public class GuiHelm extends GuiContainer
 	public void updateScreen()
 	{
 		super.updateScreen();
-		btnUndo.enabled = tileEntity.getPrevAssembleResult() != null && tileEntity.getPrevAssembleResult().getCode() != AssembleResult.RESULT_NONE;
-		btnMount.enabled = tileEntity.getAssembleResult() != null && tileEntity.getAssembleResult().getCode() == AssembleResult.RESULT_OK;
+
+		String btnText = "gui.shipstatus.compile";
+		if( tileEntity.getAssembleResult() != null && tileEntity.getAssembleResult().getCode() == AssembleResultOld.RESULT_OK )
+			btnText = "gui.shipstatus.refresh";
+		btnAssemble.displayString = I18n.format( btnText );
+
+		// btnUndo.enabled = tileEntity.getPrevAssembleResult() != null && tileEntity.getPrevAssembleResult().getCode() != AssembleResult.RESULT_NONE;
+		// btnMount.enabled = tileEntity.getAssembleResult() != null && tileEntity.getAssembleResult().getCode() == AssembleResult.RESULT_OK;
 	}
 
 	@Override
 	protected void drawGuiContainerBackgroundLayer( float partialTick, int mouseX, int mouseY )
 	{
-		GL11.glColor4f( 1F, 1F, 1F, 1F );
-		mc.renderEngine.bindTexture( BACKGROUND_TEXTURE );
+		GlStateManager.color( 1.0F, 1.0F, 1.0F, 1.0F );
+		//final ShipGuiTabs guiTabs = ShipGuiTabs.shipGuiTabArray[selectedTabIndex];
+
+		// Draw GUI tabs
+		//for( final ShipGuiTabs shipTab : ShipGuiTabs.shipGuiTabArray )
+			//if( shipTab != null && shipTab.getTabIndex() != selectedTabIndex )
+				//drawTab( shipTab );
+
+		// Draw GUI background
+		mc.renderEngine.bindTexture( helmGuiBackground );
 		drawTexturedModalRect( guiLeft, guiTop, 0, 0, xSize, ySize );
 
 		final int xAxis = mouseX - guiLeft;
@@ -130,6 +247,67 @@ public class GuiHelm extends GuiContainer
 		drawTexturedModalRect( guiLeft + 6, guiTop + 4, 176, mouseOver ? 12 : 0, 12, 12 );
 
 		txtShipName.drawTextBox();
+
+		// Draw currently selected tab
+		//drawTab( guiTabs );
+	}
+
+	protected void drawTab( ShipGuiTabs shipTab )
+	{
+		//final boolean flag = shipTab.getTabIndex() == selectedTabIndex;
+		final boolean flag1 = shipTab.isTabInFirstRow();
+		final int i = shipTab.getTabColumn();
+		final int u = i * 28;
+		int v = 0;
+		int x = guiLeft + 28 * i;
+		int y = guiTop;
+		final int h = 32;
+
+		//if( flag )
+			//v += 32;
+
+		if( i == 5 )
+			x = guiLeft + xSize - 28;
+		else
+			if( i > 0 )
+				x += i;
+
+		if( flag1 )
+			y = y - 28;
+		else
+		{
+			v += 64;
+			y = y + ySize - 4;
+		}
+
+		mc.renderEngine.bindTexture( creativeInventoryTabs );
+		GlStateManager.disableLighting();
+		GlStateManager.color( 1F, 1F, 1F ); // Forge: Reset color in case Items change it.
+		GlStateManager.enableBlend(); // Forge: Make sure blend is enabled else tabs show a white border.
+		this.drawTexturedModalRect( x, y, u, v, 28, h );
+		zLevel = 100.0F;
+		itemRender.zLevel = 100.0F;
+		x = x + 6;
+		y = y + 8 + ( flag1 ? 1 : -1 );
+		shipTab.drawTabIcon( this, x, y );
+		/*
+		final ItemStack itemstack = shipTab.getIconItemStack();
+		if( itemstack != null )
+		{
+			GlStateManager.enableLighting();
+			GlStateManager.enableRescaleNormal();
+			itemRender.renderItemAndEffectIntoGUI( itemstack, x, y );
+			itemRender.renderItemOverlays( fontRendererObj, itemstack, x, y );
+			GlStateManager.disableLighting();
+		}
+		else
+		{
+			mc.renderEngine.bindTexture( helmGuiBackground );
+			this.drawTexturedModalRect( x, y, 188, 16 * shipTab.getTabIndex(), 16, 16 );
+		}
+		itemRender.zLevel = 0.0F;
+		zLevel = 0.0F;
+		*/
 	}
 
 	@Override
@@ -138,7 +316,7 @@ public class GuiHelm extends GuiContainer
 		final int xAxis = mouseX - guiLeft;
 		final int yAxis = mouseY - guiTop;
 
-		final AssembleResult result = tileEntity.getAssembleResult();
+		final AssembleResultOld result = tileEntity.getAssembleResult();
 
 		final int color = 0x404040;
 		int row = 6;
@@ -155,7 +333,7 @@ public class GuiHelm extends GuiContainer
 
 		if( result == null )
 		{
-			rcode = busyCompiling ? AssembleResult.RESULT_BUSY_COMPILING : AssembleResult.RESULT_NONE;
+			rcode = busyCompiling ? AssembleResultOld.RESULT_BUSY_COMPILING : AssembleResultOld.RESULT_NONE;
 			rblocks = rballoons = rtes = 0;
 			rmass = 0f;
 		}
@@ -166,7 +344,7 @@ public class GuiHelm extends GuiContainer
 			rballoons = result.getBalloonCount();
 			rtes = result.getTileEntityCount();
 			rmass = result.getMass();
-			if( rcode != AssembleResult.RESULT_NONE )
+			if( rcode != AssembleResultOld.RESULT_NONE )
 				busyCompiling = false;
 		}
 
@@ -174,35 +352,35 @@ public class GuiHelm extends GuiContainer
 		int color1;
 		switch( rcode )
 		{
-		case AssembleResult.RESULT_NONE:
+		case AssembleResultOld.RESULT_NONE:
 			color1 = color;
 			rcodename = "gui.shipstatus.result.none";
 			break;
-		case AssembleResult.RESULT_OK:
+		case AssembleResultOld.RESULT_OK:
 			color1 = 0x40A000;
 			rcodename = "gui.shipstatus.result.ok";
 			break;
-		case AssembleResult.RESULT_OK_WITH_WARNINGS:
+		case AssembleResultOld.RESULT_OK_WITH_WARNINGS:
 			color1 = 0xFFAA00;
 			rcodename = "gui.shipstatus.result.okwarn";
 			break;
-		case AssembleResult.RESULT_MISSING_MARKER:
+		case AssembleResultOld.RESULT_MISSING_MARKER:
 			color1 = 0xB00000;
 			rcodename = "gui.shipstatus.result.missingmarker";
 			break;
-		case AssembleResult.RESULT_BLOCK_OVERFLOW:
+		case AssembleResultOld.RESULT_BLOCK_OVERFLOW:
 			color1 = 0xB00000;
 			rcodename = "gui.shipstatus.result.overflow";
 			break;
-		case AssembleResult.RESULT_ERROR_OCCURED:
+		case AssembleResultOld.RESULT_ERROR_OCCURED:
 			color1 = 0xB00000;
 			rcodename = "gui.shipstatus.result.error";
 			break;
-		case AssembleResult.RESULT_BUSY_COMPILING:
+		case AssembleResultOld.RESULT_BUSY_COMPILING:
 			color1 = color;
 			rcodename = "gui.shipstatus.result.busy";
 			break;
-		case AssembleResult.RESULT_INCONSISTENT:
+		case AssembleResultOld.RESULT_INCONSISTENT:
 			color1 = 0xB00000;
 			rcodename = "gui.shipstatus.result.inconsistent";
 			break;
@@ -257,9 +435,7 @@ public class GuiHelm extends GuiContainer
 
 			// Edit Ship Name
 			if( xAxis >= 6 && xAxis <= 17 && yAxis >= 4 && yAxis <= 15 )
-			{
 				buttonAction( Buttons.RENAME );
-			}
 		}
 	}
 

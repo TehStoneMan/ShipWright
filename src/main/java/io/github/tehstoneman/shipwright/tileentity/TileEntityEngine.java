@@ -172,12 +172,6 @@ public class TileEntityEngine extends TileEntity implements IInventory
 	}
 	
 	@Override
-	public ItemStack getStackInSlotOnClosing(int i)
-	{
-		return getStackInSlot(i);
-	}
-	
-	@Override
 	public void setInventorySlotContents(int i, ItemStack is)
 	{
 		if (i >= 0 && i < 4)
@@ -264,5 +258,12 @@ public class TileEntityEngine extends TileEntity implements IInventory
 	{
 		// TODO Auto-generated method stub
 		
+	}
+
+	@Override
+	public ItemStack removeStackFromSlot( int index )
+	{
+		// TODO Auto-generated method stub
+		return null;
 	}
 }

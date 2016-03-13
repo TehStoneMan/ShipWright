@@ -2,6 +2,7 @@ package io.github.tehstoneman.shipwright.util;
 
 import io.github.tehstoneman.shipwright.ModInfo;
 
+import java.io.File;
 import java.util.Collections;
 import java.util.HashSet;
 import java.util.Set;
@@ -29,11 +30,11 @@ public class ModSettings
 	private String[]			loadedMaterialDensities;
 
 	// Settings
-	public boolean				enableAirShips;
+	public boolean				enableAirShips, enableSubmarines;
 	public int					shipEntitySyncRate;
 
 	// Mobile Chunk
-	public int					maxShipChunkBlocks;
+	public int					maxShipChunkBlocks, maxHelmRangeBlocks, maxStructureRangeBlocks;
 	public float				flyBalloonRatio;
 	public boolean				connectDiagonalBlocks1, connectDiagonalBlocks2;
 	public boolean				useWhitelist;
@@ -42,6 +43,9 @@ public class ModSettings
 	public Set< String >		overwritableBlocks;
 	public boolean				useNewAlgorithm;
 
+	// Ship dimension
+	public int shipDimID;
+	
 	// Control
 	public int					shipControlType;
 	public float				turnSpeed;
@@ -235,6 +239,7 @@ public class ModSettings
 
 		shipEntitySyncRate = config.get( "settings", "sync_rate", 20, "The amount of ticks between a server-client synchronization. Higher numbers reduce network traffic. Lower numbers increase multiplayer experience. 20 ticks = 1 second" ).getInt();
 		enableAirShips = config.get( "settings", "enable_air_ships", true, "Enable or disable air ships." ).getBoolean( true );
+		enableSubmarines = config.get( "settings", "enable_submarines", true, "Enable or disable submarines." ).getBoolean( true );
 		useNewAlgorithm = config.get( "settings", "use_iterative_assemble_algorithm", false, "New assemble algorithm implemented in v1.6.2. Allows for larger ships but is a heavier load for CPU." ).getBoolean( false );
 		bankingMultiplier = (float)config.get( "settings", "banking_multiplier", 3d, "A multiplier for how much ships bank while making turns. Set a positive value for passive banking or a negative value for active banking. 0 disables banking." ).getDouble( 3d );
 
@@ -244,7 +249,10 @@ public class ModSettings
 		speedLimit /= 20F;
 		disassembleOnDismount = config.get( "control", "decompile_on_dismount", false ).getBoolean( false );
 
+		shipDimID = config.get( "mobile_chunk", "dimension_id", 42, "The ID of the custom dimension that holds assembled ships" ).getInt();
 		maxShipChunkBlocks = config.get( "mobile_chunk", "max_chunk_blocks", 2048, "The maximum amount of blocks that a mobile ship chunk may contain." ).getInt();
+		maxHelmRangeBlocks = config.get( "mobile_chunk", "max_helm_range", 4, "The maximum size limit of a ship with only a helm block." ).getInt();
+		maxStructureRangeBlocks = config.get( "mobile_chunk", "max_structure_range", 2, "The maximum amount a structure block can extend the size limit of a ship." ).getInt();
 		// maxShipChunkBlocks = Math.min(maxShipChunkBlocks, 3400);
 		flyBalloonRatio = (float)config.get( "mobile_chunk", "airship_balloon_ratio", 0.4D, "The part of the total amount of blocks that should be balloon blocks in order to make an airship." ).getDouble( 0.4D );
 		connectDiagonalBlocks1 = config.get( "mobile_chunk", "connect_diagonal_blocks_1", false, "Blocks connected diagonally on one axis will also be added to the ship if this value is set to 'true'." ).getBoolean( false );
@@ -354,5 +362,11 @@ public class ModSettings
 	private int getKeyIndex( Configuration config, String name, int defaultkey )
 	{
 		return Keyboard.getKeyIndex( config.get( "control", name, Keyboard.getKeyName( defaultkey ) ).getString() );
+	}
+
+	public static void init( File suggestedConfigurationFile )
+	{
+		// TODO Auto-generated method stub
+		
 	}
 }

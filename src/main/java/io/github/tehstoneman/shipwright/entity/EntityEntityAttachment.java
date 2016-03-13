@@ -105,7 +105,7 @@ public class EntityEntityAttachment extends Entity implements IEntityAdditionalS
 	}
 	
 	@Override
-	public AxisAlignedBB getBoundingBox()
+	public AxisAlignedBB getCollisionBoundingBox()
 	{
 		return null;
 	}

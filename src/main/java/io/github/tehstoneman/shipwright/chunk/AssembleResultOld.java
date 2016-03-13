@@ -16,7 +16,7 @@ import net.minecraft.tileentity.TileEntity;
 import net.minecraft.util.BlockPos;
 import net.minecraft.world.World;
 
-public class AssembleResult
+public class AssembleResultOld
 {
 	public static final int		RESULT_NONE		= 0, RESULT_OK = 1, RESULT_BLOCK_OVERFLOW = 2, RESULT_MISSING_MARKER = 3, RESULT_ERROR_OCCURED = 4,
 			RESULT_BUSY_COMPILING = 5, RESULT_INCONSISTENT = 6, RESULT_OK_WITH_WARNINGS = 7;
@@ -31,7 +31,7 @@ public class AssembleResult
 
 	public BlockPos				offsetPos;
 
-	public AssembleResult( ByteBuf buf )
+	public AssembleResultOld( ByteBuf buf )
 	{
 		resultCode = buf.readByte();
 		if( resultCode == RESULT_NONE )
@@ -42,7 +42,7 @@ public class AssembleResult
 		mass = buf.readFloat();
 	}
 
-	public AssembleResult( NBTTagCompound compound, World world )
+	public AssembleResultOld( NBTTagCompound compound, World world )
 	{
 		resultCode = compound.getByte( "res" );
 		blockCount = compound.getInteger( "blockc" );
@@ -66,7 +66,7 @@ public class AssembleResult
 		}
 	}
 
-	AssembleResult()
+	AssembleResultOld()
 	{
 		clear();
 	}
@@ -103,7 +103,7 @@ public class AssembleResult
 		// shipMarkingBlock.coords.getZ() - zOffset);
 		entity.getShipChunk().setCreationSpotBiomeGen( world.getBiomeGenForCoords( shipMarkingBlock.coords ) );
 
-		final boolean flag = world.getGameRules().getGameRuleBooleanValue( "doTileDrops" );
+		final boolean flag = world.getGameRules().getBoolean( "doTileDrops" );
 		world.getGameRules().setOrCreateGameRule( "doTileDrops", "false" );
 
 		try
@@ -112,12 +112,11 @@ public class AssembleResult
 			BlockPos tPos;
 			for( final LocatedBlock lb : assembledBlocks )
 			{
-				tPos = lb.coords.add( offsetPos.multiply( -1 ) );
+				//tPos = lb.coords.add( offsetPos.multiply( -1 ) );
 				tileentity = lb.tileEntity;
 				if( tileentity != null || lb.block.hasTileEntity( lb.blockMeta ) && ( tileentity = world.getTileEntity( lb.coords ) ) != null )
 					tileentity.validate();
-				if( entity.getShipChunk().setBlockIDWithMetadata( tPos, lb.block, lb.blockMeta ) )
-					entity.getShipChunk().setTileEntity( tPos, tileentity );
+				//if( entity.getShipChunk().setBlockIDWithMetadata( tPos, lb.block, lb.blockMeta ) ) entity.getShipChunk().setTileEntity( tPos, tileentity );
 				// world.setBlockState(new BlockPos(lb.coords.getX(), lb.coords.getY(), lb.coords.getZ()), Blocks.air, 1, 2); //0b10
 			}
 			for( final LocatedBlock block : assembledBlocks )

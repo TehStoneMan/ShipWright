@@ -4,12 +4,14 @@ import io.github.tehstoneman.shipwright.entity.EntityEntityAttachment;
 import io.github.tehstoneman.shipwright.entity.EntityParachute;
 import io.github.tehstoneman.shipwright.entity.EntitySeat;
 import io.github.tehstoneman.shipwright.entity.EntityShip;
-import io.github.tehstoneman.shipwright.mrot.MetaRotations;
 import io.github.tehstoneman.shipwright.proxies.CommonProxy;
 import io.github.tehstoneman.shipwright.util.ModSettings;
+import io.github.tehstoneman.shipwright.world.WorldProviderShip;
+import net.minecraftforge.common.DimensionManager;
 import net.minecraftforge.common.config.Configuration;
 import net.minecraftforge.fml.common.Mod;
 import net.minecraftforge.fml.common.Mod.EventHandler;
+import net.minecraftforge.fml.common.Mod.Instance;
 import net.minecraftforge.fml.common.ModMetadata;
 import net.minecraftforge.fml.common.SidedProxy;
 import net.minecraftforge.fml.common.event.FMLInitializationEvent;
@@ -27,32 +29,35 @@ import net.minecraftforge.fml.common.registry.EntityRegistry;
 //@formatter:on
 public class ShipWright
 {
-	public static ModMetadata	modMetadata;
+	public static ModMetadata			modMetadata;
 
-	@Mod.Instance( value = ModInfo.MODID )
-	public static ShipWright	instance;
-	public static SimpleNetworkWrapper	network;
+	@Instance( value = ModInfo.MODID )
+	public static ShipWright			instance;
 
 	// Define proxies
 	@SidedProxy( clientSide = ModInfo.PROXY_LOCATION + "ClientProxy", serverSide = ModInfo.PROXY_LOCATION + "CommonProxy" )
-	public static CommonProxy	proxy;
+	public static CommonProxy			proxy;
 
-	public ModSettings			modConfig;
-	public MetaRotations		metaRotations = new MetaRotations();
+	public ModSettings					modConfig;
+	public static SimpleNetworkWrapper	network;
 
 	@EventHandler
-	public void preInitialize( FMLPreInitializationEvent event )
+	public void preInit( FMLPreInitializationEvent event )
 	{
+		// Load configuration
+		ModSettings.init( event.getSuggestedConfigurationFile() );
+
 		proxy.preInit();
 
 		modConfig = new ModSettings( new Configuration( event.getSuggestedConfigurationFile() ) );
 		modConfig.loadAndSave();
 
-		metaRotations.setConfigDirectory( event.getModConfigurationDirectory() );
-
-		//pipeline.initalize();
+		// pipeline.initalize();
 
 		modConfig.postLoad();
+
+		// Initialize API
+		// ShipAPI
 	}
 
 	private void registerBlocksAndItems()
@@ -87,7 +92,7 @@ public class ShipWright
 	}
 
 	@Mod.EventHandler
-	public void initialize( FMLInitializationEvent event )
+	public void init( FMLInitializationEvent event )
 	{
 		proxy.init();
 
@@ -97,6 +102,9 @@ public class ShipWright
 		EntityRegistry.registerModEntity( EntityEntityAttachment.class, "attachment", 2, this, 64, 100, false );
 		EntityRegistry.registerModEntity( EntitySeat.class, "attachment.seat", 3, this, 64, 100, false );
 		EntityRegistry.registerModEntity( EntityParachute.class, "parachute", 4, this, 32, modConfig.shipEntitySyncRate, true );
+
+		DimensionManager.registerProviderType( modConfig.shipDimID, WorldProviderShip.class, true );
+		DimensionManager.registerDimension( modConfig.shipDimID, modConfig.shipDimID );
 
 		/*
 		 * MaterialDensity.addDensity(Material.air, 0F);
@@ -135,9 +143,10 @@ public class ShipWright
 	}
 
 	@EventHandler
-	public void postInitMod( FMLPostInitializationEvent event )
+	public void postInit( FMLPostInitializationEvent event )
 	{
-		metaRotations.readMetaRotationFiles();
+		proxy.postInit();
+		// metaRotations.readMetaRotationFiles();
 	}
 
 	/**

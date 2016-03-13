@@ -1,6 +1,6 @@
 package io.github.tehstoneman.shipwright.block;
 
-import io.github.tehstoneman.shipapi.BlockDensity;
+import io.github.tehstoneman.shipwright.api.IBlockDensity;
 
 import java.util.List;
 
@@ -20,7 +20,7 @@ import net.minecraftforge.fml.relauncher.Side;
 import net.minecraftforge.fml.relauncher.SideOnly;
 
 @Optional.Interface(iface="io.gethub.tehstoneman.shipapi.BlockDensity", modid="shipwright", striprefs=true)
-public class BlockBalloon extends Block implements BlockDensity
+public class BlockBalloon extends Block implements IBlockDensity
 {
 	public static final PropertyEnum	COLOR	= PropertyEnum.create( "color", EnumDyeColor.class );
 	private static String				name	= "balloon";
@@ -42,7 +42,7 @@ public class BlockBalloon extends Block implements BlockDensity
 	public int damageDropped( IBlockState state )
 	{
 		final EnumDyeColor enumColor = (EnumDyeColor) state.getValue( COLOR );
-		return enumColor.getDyeColorDamage();
+		return enumColor.getDyeDamage();
 	}
 
 	@Override
@@ -51,19 +51,19 @@ public class BlockBalloon extends Block implements BlockDensity
 	{
 		final EnumDyeColor[] allColors = EnumDyeColor.values();
 		for (final EnumDyeColor color : allColors)
-			list.add( new ItemStack( itemIn, 1, color.getDyeColorDamage() ) );
+			list.add( new ItemStack( itemIn, 1, color.getDyeDamage() ) );
 	}
 
 	@Override
 	public IBlockState getStateFromMeta( int meta )
 	{
-		return getDefaultState().withProperty( COLOR, EnumDyeColor.func_176764_b( meta ) );
+		return getDefaultState().withProperty( COLOR, EnumDyeColor.byMetadata( meta ) );
 	}
 
 	@Override
 	public int getMetaFromState( IBlockState state )
 	{
-		return ((EnumDyeColor) state.getValue( COLOR )).getDyeColorDamage();
+		return ((EnumDyeColor) state.getValue( COLOR )).getDyeDamage();
 	}
 
 	@Override
